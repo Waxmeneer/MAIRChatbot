@@ -1,15 +1,14 @@
-import json
-import os
+import json, sys,os
 
 #FUNCTION LIST
 #=============================================================================
-#function to load json file
+#Function to load the json files.
 def load_js_file_to_object( dirName, fileName ):
     completeFileAddress =  os.path.join(dirName, fileName)
     with open(completeFileAddress) as json_file:
         return json.load(json_file)
 
-#function to calculate the biggest dialog length
+#Function that returns the biggest dialogue length.
 def calculate_biggest_dialog_length( user, system ):
     userLen = len(user["turns"])
     systemLen = len(system["turns"])
@@ -22,7 +21,7 @@ def calculate_biggest_dialog_length( user, system ):
 
     return biggestLen
 
-#function to print in console or/and write to file
+#Function to print in console or/and write to a file.
 def print_write_data( preText, data ):
     text = preText + data
     print(text)
@@ -30,68 +29,85 @@ def print_write_data( preText, data ):
         newFile.write(text + "\r\n")
 #=============================================================================
 
-#CONFIGURATION
-#=============================================================================
-fileName = "dialog_combined_results.txt"
-directoryToSearch = '.'
-#=============================================================================
+if __name__ == "__main__":
+	#CONFIGURATION
+	#=============================================================================
+	#The user can either specify where the data of the transcripts is stored, or not define
+	#it, in which case the program uses the predefined location.
+	try:
+		dirs = sys.argv[1]
+	except:
+		dirs = ["dstc2_test/data","dstc2_traindev/data"]
+	currentdir = os.getcwd()
+	fileName = "dialog_combined_results.txt"
+	directoryToSearch = '.'
+	#=============================================================================
 
-#START HERE
+	#START HERE
+	#The user has two options, either to let the transcripts be written to the console or to one big file
+	#(which is also printed on the console).
+	while True:
+		data = input("Select one option: (a)console, (b)print in one big file   ")
+		if data.lower() not in ('a', 'b'):
+			print("Invalid answer")
+		else:
+			break
 
-#console questions
-while True:
-    data = input("Select one option: (a)console, (b)print in one big file   ")
-    if data.lower() not in ('a', 'b'):
-        print("Invalid answer")
-    else:
-        break
+	# Simple boolean that indicates whether the program has to write to a file.
+	isPrint = False if data.lower() == 'a' else True
 
-# check print or console
-isPrint = False if data.lower() == 'a' else True
+	#Open a file to allow the writing of the dialogue to a file.
+	if isPrint:
+		newFile = open(fileName,"w+")
 
-#open file start writting
-if isPrint:
-    newFile = open(fileName,"w+")
+	number = 1;
 
-number = 1;
+	#Loops through the location of the training set and test set. 
+	for dir in dirs:
+		fulldir = os.path.join(currentdir, dir)
+		subdirs = [subdir for subdir in os.listdir(fulldir)]
+		#Loops through the different sets of data presetn in both the folders.
+		for dataset in subdirs:
+			#This if statement catches some unwanted files that might be present in the folder 
+			#(e.g. the .DS_Store files that Mac may computers may create)
+			if os.path.isdir(os.path.join(fulldir,dataset)):	
+				for tcdir in os.listdir(os.path.join(fulldir, dataset)):
+					#This creates the full directory of the transcript datafiles.
+					tcdir = os.path.join(fulldir, dataset, tcdir)
+					#This again catches potentially unwanted files.
+					if os.path.isdir(tcdir):
+						#Loads the json file.
+						user = load_js_file_to_object(tcdir, 'label.json')
+						system = load_js_file_to_object(tcdir, 'log.json')
 
-#looping through list of all directory in current directory
-for dirName, dirNames, fileNames in os.walk(directoryToSearch):
-    # only taking directory that has 'voip' in its name
-    if 'voip' in dirName:
+						#Gets the biggest length of both participants in the dialogue, and the individual user and system length.
+						biggestLen = calculate_biggest_dialog_length(user, system)
+						userLen = len(user["turns"])
+						systemLen = len(system["turns"])
 
-        #load the json file
-        user = load_js_file_to_object(dirName, 'label.json')
-        system = load_js_file_to_object(dirName, 'log.json')
+						#Prints dialogue information.
+						print_write_data('number: ', str(number))
+						print_write_data('session id: ', user["session-id"])
+						print_write_data('', user["task-information"]["goal"]["text"])
 
-        #get length for the biggest, user and system length
-        biggestLen = calculate_biggest_dialog_length(user, system)
-        userLen = len(user["turns"])
-        systemLen = len(system["turns"])
+						#Prints dialogue turn utterances.
+						for i in range(biggestLen):
+							if i+1 <= systemLen:
+								print_write_data('system: ', system["turns"][i]["output"]["transcript"])
 
-        #print dialog information
-        print_write_data('number: ', str(number))
-        print_write_data('session id: ', user["session-id"])
-        print_write_data('', user["task-information"]["goal"]["text"])
+							if i+1 <= userLen:
+								print_write_data('user: ', user["turns"][i]["transcription"] )
 
-        #print dialgo turns
-        #looping through every turn
-        for i in range(biggestLen):
-            if i+1 <= systemLen:
-                print_write_data('system: ', system["turns"][i]["output"]["transcript"])
+						#End of dialog
+						if isPrint:
+							newFile.write("\r\n")
+						else:
+							print('===========================')
+							input('Press enter to continue: ')
+							print("")
 
-            if i+1 <= userLen:
-                print_write_data('user: ', user["turns"][i]["transcription"] )
+						number = number + 1
 
-        #end of dialog
-        if isPrint:
-            newFile.write("\r\n")
-        else:
-            print('===========================')
-            input('Press enter to continue: ')
-
-        number = number + 1
-
-# close file
-if isPrint:
-    newFile.close()
+	# Closes the file
+	if isPrint:
+		newFile.close()
