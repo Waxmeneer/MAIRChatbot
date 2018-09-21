@@ -24,11 +24,10 @@ if __name__ == "__main__":
 	length = len(pathlist)
 	c=0
 	while c<length:
-		if c<int(0.85*length):
-			print(traindest)
+		if c<=int(0.85*length):
 			shutil.move(pathlist[c], traindest)
 		else:
 			shutil.move(pathlist[c], testdest)
 		c+=1
-			
+	input("Press enter to exit")
             
