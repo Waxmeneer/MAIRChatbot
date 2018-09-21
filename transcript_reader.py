@@ -1,4 +1,4 @@
-import json, sys,os
+import json, sys,os, re
 
 #FUNCTION LIST
 #=============================================================================
@@ -47,14 +47,21 @@ if __name__ == "__main__":
 	#The user has two options, either to let the transcripts be written to the console or to one big file
 	#(which is also printed on the console).
 	while True:
-		data = input("Select one option: (a)console, (b)print in one big file   ")
-		if data.lower() not in ('a', 'b'):
+		data = input("Select one option: (a)console, (b)print in one big file, (c)speech act   ")
+		if data.lower() not in ('a', 'b', 'c'):
 			print("Invalid answer")
 		else:
 			break
 
 	# Simple boolean that indicates whether the program has to write to a file.
-	isPrint = False if data.lower() == 'a' else True
+	isPrint = False if data.lower() == ('a' or 'c') else True
+
+	# Simple boolean that indicates whether the program needs to print speech act.
+	isSpeechAct = True if data.lower() == 'c' else False
+	
+	#rename the file name for speech act
+	if isSpeechAct:
+		fileName = "speech_act_results.txt"
 
 	#Open a file to allow the writing of the dialogue to a file.
 	if isPrint:
@@ -62,15 +69,15 @@ if __name__ == "__main__":
 
 	number = 1;
 
-	#Loops through the location of the training set and test set. 
+	#Loops through the location of the training set and test set.
 	for dir in dirs:
 		fulldir = os.path.join(currentdir, dir)
 		subdirs = [subdir for subdir in os.listdir(fulldir)]
 		#Loops through the different sets of data presetn in both the folders.
 		for dataset in subdirs:
-			#This if statement catches some unwanted files that might be present in the folder 
+			#This if statement catches some unwanted files that might be present in the folder
 			#(e.g. the .DS_Store files that Mac may computers may create)
-			if os.path.isdir(os.path.join(fulldir,dataset)):	
+			if os.path.isdir(os.path.join(fulldir,dataset)):
 				for tcdir in os.listdir(os.path.join(fulldir, dataset)):
 					#This creates the full directory of the transcript datafiles.
 					tcdir = os.path.join(fulldir, dataset, tcdir)
@@ -85,26 +92,36 @@ if __name__ == "__main__":
 						userLen = len(user["turns"])
 						systemLen = len(system["turns"])
 
-						#Prints dialogue information.
-						print_write_data('number: ', str(number))
-						print_write_data('session id: ', user["session-id"])
-						print_write_data('', user["task-information"]["goal"]["text"])
+						if not isSpeechAct:
+							#Prints dialogue information.
+							print_write_data('number: ', str(number))
+							print_write_data('session id: ', user["session-id"])
+							print_write_data('', user["task-information"]["goal"]["text"])
 
 						#Prints dialogue turn utterances.
 						for i in range(biggestLen):
-							if i+1 <= systemLen:
-								print_write_data('system: ', system["turns"][i]["output"]["transcript"])
 
-							if i+1 <= userLen:
-								print_write_data('user: ', user["turns"][i]["transcription"] )
+							if isSpeechAct:
+								if i+1 <= userLen:
+									speechAct = user["turns"][i]["semantics"]["cam"]
+									speechAct = re.sub(r'\(.*?\)', '()', speechAct)
+									print_write_data(speechAct + ' ', user["turns"][i]["transcription"] )
+							else:
+            							if i+1 <= systemLen:
+                							print_write_data('system: ', system["turns"][i]["output"]["transcript"])
+
+            							if i+1 <= userLen:
+                							print_write_data('user: ', user["turns"][i]["transcription"] )
+
 
 						#End of dialog
-						if isPrint:
-							newFile.write("\r\n")
-						else:
-							print('===========================')
-							input('Press enter to continue: ')
-							print("")
+						if not isSpeechAct:
+							if isPrint:
+								newFile.write("\r\n")
+							else:
+								print('===========================')
+								input('Press enter to continue: ')
+								print("")
 
 						number = number + 1
 
