@@ -8,7 +8,7 @@ if __name__ == "__main__":
 		testdir = sys.argv[3]
 	except:
 		print("Default directories selected")
-		datadir = "speechfile.txt"
+		datadir = "speech_act_results.txt"
 		traindir = "Train set/traindata.txt"
 		testdir = "Test set/testdata.txt"
 	currentdir = os.getcwd()
