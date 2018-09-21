@@ -1,6 +1,52 @@
 import sys, os, shutil
 import random
 
+if __name__ == "__main__":
+	try:
+		datadir= sys.argv[1]
+		traindir = sys.argv[2]
+		testdir = sys.argv[3]
+	except:
+		print("Default directories selected")
+		datadir = "speechfile.txt"
+		traindir = "Train set/traindata.txt"
+		testdir = "Test set/testdata.txt"
+	currentdir = os.getcwd()
+	speechfile = file.open(os.path.join(currentdir, datadir), "r")
+	trainfile = file.open(os.path.join(currentdir, traindir), "w")
+	testfile = file.open(os.path.join(currentdir, testdir), "w")
+	speechactdict = dict()
+	totalacts=0
+	c=0
+	random.shuffle(speechfile)
+	while c<len(speechfile):
+		line = speechfile[c]
+		actsamt = countspeechacts(line)
+		totalacts+=actsamt
+		c+=1
+	currentactsamt=0
+	for line in speechfile:
+		currentactsamt+= countspeechacts(line)
+		if currenactsamt<=0.85*totalacts:
+			trainfile.write(line + "\n")
+		else:
+			testfile.write(line + "\n")	
+	trainfile.close()
+	testfile.close()
+
+	
+def countspeechacts(line):
+	split = line.split()
+	count =0
+	for word in split:
+		for "()" in word:
+			count+=1
+	return count
+
+	
+	
+#Unused code that would split the dataset on files, not speech acts. 	
+"""
 traindest = os.path.join(os.getcwd(), "Shuffled train set")
 testdest = os.path.join(os.getcwd(), "Shuffled test set")
 if __name__ == "__main__":
@@ -30,4 +76,4 @@ if __name__ == "__main__":
 			shutil.move(pathlist[c], testdest)
 		c+=1
 	input("Press enter to exit")
-            
+ """
