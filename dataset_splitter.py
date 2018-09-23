@@ -1,6 +1,42 @@
 import sys, os, shutil
 import random
 
+def writeToFiles(text, actdict, trainfile, testfile):
+	currentactdict = dict()
+	for key in actdict.keys():
+		currentactdict[key] = 0
+		
+	for line in text:
+		acts = getspeechacts(line)
+		if currentactdict[acts] <= actdict[acts]*0.85:
+			trainfile.write(line)
+			currentactdict[acts]+=1
+		else:
+			testfile.write(line)
+			currentactdict[acts]+=1 #Not needed but remains for clarity
+	trainfile.close()
+	testfile.close()
+	
+def getspeechacts(line):
+	words = line.split()
+	count =0
+	for word in words:
+		if '()' in word: 
+			return word 
+			#Some sentences have multiple acts, which are divided by a | in the text file. 
+			#However, the dictionary stores them together, as they occurred together in the sentence.
+
+def createactdict(text):
+	actdict = dict()
+	for line in text:
+		acts = getspeechacts(line)
+		if acts in actdict:
+			actdict[acts]+=1
+		else:
+			actdict[acts]=1
+	return actdict
+	
+
 if __name__ == "__main__":
 	try:
 		datadir= sys.argv[1]
@@ -12,37 +48,18 @@ if __name__ == "__main__":
 		traindir = "Train set/traindata.txt"
 		testdir = "Test set/testdata.txt"
 	currentdir = os.getcwd()
-	speechfile = file.open(os.path.join(currentdir, datadir), "r")
-	trainfile = file.open(os.path.join(currentdir, traindir), "w")
-	testfile = file.open(os.path.join(currentdir, testdir), "w")
-	speechactdict = dict()
-	totalacts=0
-	c=0
-	random.shuffle(speechfile)
-	while c<len(speechfile):
-		line = speechfile[c]
-		actsamt = countspeechacts(line)
-		totalacts+=actsamt
-		c+=1
-	currentactsamt=0
-	for line in speechfile:
-		currentactsamt+= countspeechacts(line)
-		if currenactsamt<=0.85*totalacts:
-			trainfile.write(line + "\n")
-		else:
-			testfile.write(line + "\n")	
-	trainfile.close()
-	testfile.close()
-
 	
-def countspeechacts(line):
-	split = line.split()
-	count =0
-	for word in split:
-		for "()" in word:
-			count+=1
-	return count
+	#The script tries to find the speech act data files in the same directory, else it takes them from the github.
+	speechfile = open(os.path.join(currentdir, datadir), "r")
+	trainfile = open(os.path.join(currentdir, traindir), "w+")
+	testfile = open(os.path.join(currentdir, testdir), "w+")
+	speech = speechfile.readlines()
+	random.shuffle(speech)     #It is debatable whether it is deemed useful to shuffle before splitting and could be removed.
+	actdict = createactdict(speech)
+	writeToFiles(speech, actdict, trainfile, testfile)
 
+		
+	
 	
 	
 #Unused code that would split the dataset on files, not speech acts. 	
