@@ -1,14 +1,18 @@
 import sys, os, shutil
 import random
 
+#This python script splits speech act data into a training set and test set, so that the training set contains 85% of the data
+#and the test set 15%. The proportions of speech acts are preserved.
+
+#This function writes the lines of a list of text to a training set and test set. The proportions
+#of speech acts are weighed, so that both files contain more or less the same amount relatively.
 def writeToFiles(text, actdict, trainfile, testfile):
-	currentactdict = dict()
+	currentactdict = dict() #This dictionary keeps track of the amount of speech acts that have been counted so far.
 	for key in actdict.keys():
-		currentactdict[key] = 0
-		
+		currentactdict[key] = 0	
 	for line in text:
 		acts = getspeechacts(line)
-		if currentactdict[acts] <= actdict[acts]*0.85:
+		if currentactdict[acts] <= actdict[acts]*0.85: #The 0.85 makes that the train set contains 85% of the data and the test set 15%
 			trainfile.write(line)
 			currentactdict[acts]+=1
 		else:
@@ -16,15 +20,16 @@ def writeToFiles(text, actdict, trainfile, testfile):
 			currentactdict[acts]+=1 #Not needed but remains for clarity
 	trainfile.close()
 	testfile.close()
-	
+
+#This method returns the speech act or acts for a given line. Note that multiple speech acts consist of one word
+#in the data set, where the acts are separated by a |. Consequence is that they will not be put in the dictionary as
+#separate values.
 def getspeechacts(line):
 	words = line.split()
 	count =0
 	for word in words:
 		if '()' in word: 
 			return word 
-			#Some sentences have multiple acts, which are divided by a | in the text file. 
-			#However, the dictionary stores them together, as they occurred together in the sentence.
 
 def createactdict(text):
 	actdict = dict()
@@ -38,6 +43,8 @@ def createactdict(text):
 	
 
 if __name__ == "__main__":
+	#The user can specify the paths of the speech acts file, training data folder and test data folder. If they aren't 
+	#specified as extra arguments, the script takes the default ones.
 	try:
 		datadir= sys.argv[1]
 		traindir = sys.argv[2]
@@ -49,48 +56,20 @@ if __name__ == "__main__":
 		testdir = "Test set/testdata.txt"
 	currentdir = os.getcwd()
 	
-	#The script tries to find the speech act data files in the same directory, else it takes them from the github.
-	speechfile = open(os.path.join(currentdir, datadir), "r")
-	trainfile = open(os.path.join(currentdir, traindir), "w+")
-	testfile = open(os.path.join(currentdir, testdir), "w+")
+	#These try and excepts give the user feedback on what went wrong.
+	try:
+		speechfile = open(os.path.join(currentdir, datadir), "r")
+	except:
+		print("Speech act file not present, default is: speech_act_results.txt")
+	try:
+		trainfile = open(os.path.join(currentdir, traindir), "w+")
+	except:
+		print("Training folder not present, default is: Train set")
+	try:
+		testfile = open(os.path.join(currentdir, testdir), "w+")
+	except:
+		print("Test folder not present, default is: Test set")
 	speech = speechfile.readlines()
 	random.shuffle(speech)     #It is debatable whether it is deemed useful to shuffle before splitting and could be removed.
 	actdict = createactdict(speech)
 	writeToFiles(speech, actdict, trainfile, testfile)
-
-		
-	
-	
-	
-#Unused code that would split the dataset on files, not speech acts. 	
-"""
-traindest = os.path.join(os.getcwd(), "Shuffled train set")
-testdest = os.path.join(os.getcwd(), "Shuffled test set")
-if __name__ == "__main__":
-	try:
-		dirs = sys.argv[1]
-	except:
-		dirs = ["dstc2_test/data","dstc2_traindev/data"]
-	input('This script will shuffle all files in the training and test sets and move them to a new location. Proceed?')
-	input('Are you sure?')
-	currentdir = os.getcwd()
-	pathlist = []
-	for dir in dirs:
-		fulldir = os.path.join(currentdir, dir)
-		for dataset in os.listdir(fulldir):
-			if os.path.isdir(os.path.join(fulldir,dataset)):
-				for directory in os.listdir(os.path.join(fulldir,dataset)):
-					path = os.path.join(fulldir,dataset,directory)
-					if os.path.isdir(path):
-						pathlist.append(path)
-	random.shuffle(pathlist)
-	length = len(pathlist)
-	c=0
-	while c<length:
-		if c<=int(0.85*length):
-			shutil.move(pathlist[c], traindest)
-		else:
-			shutil.move(pathlist[c], testdest)
-		c+=1
-	input("Press enter to exit")
- """
