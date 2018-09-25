@@ -5,6 +5,10 @@ from keras.preprocessing.text import Tokenizer
 import numpy
 from keras.preprocessing.sequence import pad_sequences
 
+
+#The dictionary with integers mapped to the speech acts. 
+speechactdict = {'ack':1,'affirm':2,'bye':3,'confirm':4,'deny':5,'hello':6,'inform':7,'negate':8,'null':9,'repeat':10,'reqalts':11,'reqmore':12,'request':13,'restart':14,'thankyou':15}
+
 #Y_train (TODO: convert strings to ints)
 speech_acts = [0, 1, 2]
 #X_train
@@ -39,4 +43,37 @@ model.fit(padded_text, speech_acts, epochs=2)
 #test model
 score = model.evaluate()
 print(score)
+
+
+#Splits a single line into speech acts and utterances, where speech acts are the first word on the line.
+def splitline(line):
+	acts = []
+	text = ''
+	try:
+		words = line.split()
+		text = " ".join(words[1:])
+		actbundle = words[0]
+		splitacts = actbundle.split('|')
+		for bracketact in splitacts:
+			act = bracketact.replace('()', '')
+			actnr = speechactdict[act]
+			acts.append(actnr)
+	except:
+		print("No speech act found!")
+		return ['', '']
+	combined = [acts, text]
+	return combined
+	
+#Splits the lines of the specified file into speech acts and utterances, and returns a dictionary with the structure utterance:speech acts	
+def splittext(file):
+	text = open(file, 'r')
+	lines = text.readlines()
+	linedict = dict()
+	for line in lines:
+		split = splitline(line)
+		acts = split[0]
+		utterance = split[1]
+		linedict[utterance]=acts
+	return linedict
+	
 #train model compile() >  categorical cross-entropy as loss function and accuracy as evaluation measure.
