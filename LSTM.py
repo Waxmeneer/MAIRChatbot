@@ -73,11 +73,12 @@ model.add(Dense(units=1, activation='softmax'))
 
 #train model
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
-print(trainacts)
-model.fit(padded_text_train, trainacts, epochs=5)
+trainacts_binary = to_categorical(trainacts)
+testacts_binary = to_categorical(testacts)
+model.fit(padded_text_train, trainacts_binary, epochs=5)
 
-#test model
-score = model.evaluate(padded_text_test, testacts)
+# test model
+score = model.evaluate(padded_text_test, testacts_binary)
 print(score)
 
 
