@@ -1,6 +1,6 @@
 import keras
 from keras.models import Sequential
-from keras.layers import Embedding, Dense, LSTM
+from keras.layers import Embedding, Dense, LSTM, Dropout
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 
@@ -69,6 +69,7 @@ print(tokenizer.word_index)
 model = Sequential()
 model.add(Embedding(input_dim=vocab_size+1, mask_zero=True, output_dim=100, input_length=10)) #outputs 3D tensor
 model.add(LSTM(10, activation='relu'))
+model.add(Dropout(0.25))
 model.add(Dense(units=1, activation='softmax'))
 
 #train model
