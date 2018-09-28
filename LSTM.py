@@ -5,8 +5,8 @@ from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 
 #The dictionary with integers mapped to the speech acts.
-speechactdict = {'ack':1,'affirm':2,'bye':3,'confirm':4,'deny':5,'hello':6,'inform':7,'negate':8,
-                 'null':9,'repeat':10,'reqalts':11,'reqmore':12,'request':13,'restart':14,'thankyou':15}
+speechactdict = {'ack':1,'affirm':2,'confirm':3,'deny':4,'hello':5,'inform':6,'negate':7,
+                 'null':8,'repeat':9,'reqalts':10,'reqmore':11,'request':12,'restart':13,'thankyou|bye':14}
 
 # Splits a single line into speech acts and utterances, where speech acts are the first word on the line.
 def splitline(line):
@@ -16,7 +16,6 @@ def splitline(line):
         words = line.split()
         text = " ".join(words[1:])
         actbundle = words[0]
-        splitacts = actbundle.split('|')
         for bracketact in splitacts:
             act = bracketact.replace('()', '')
             actnr = speechactdict[act]
