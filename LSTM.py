@@ -30,26 +30,35 @@ def splitline(line):
 
 # Splits the lines of the specified file into speech acts and utterances, and returns a dictionary with the structure utterance:speech acts
 def splittext(file):
-    text = open(file, 'r')
-    lines = text.readlines()
-    linedict = dict()
-    for line in lines:
-        split = splitline(line)
-        acts = split[0]
-        utterance = split[1]
-        linedict[utterance] = acts
-    return linedict
+	text = open(file, 'r')
+	lines = text.readlines()
+	linelist = []
+	for line in lines:
+		split = splitline(line)
+		acts = split[0]
+		utterance = split[1]
+		for act in acts:
+			linelist.append([utterance, act])
+	return linelist
 
 #train and test data
-Traindata = splittext("Train set/traindata.txt")
-Testdata = splittext("Test set/testdata.txt")
-
+trainlist = splittext("Train set/traindata.txt")
+trainutterances, testutterances = [],[] #Two lists of (single element) utterances.
+trainacts, testacts = [],[] #Two lists of (single element) acts.
+for sentence in trainlist:
+	trainutterances.append(sentence[0])
+	trainacts.append(sentence[1])
+testlist = splittext("Test set/testdata.txt")
+for sentence in testlist:
+	testutterances.append(sentence[0])
+	testacts.append(sentence[1])
+	
 #create tokenizer
 tokenizer = Tokenizer(oov_token=999)
-tokenizer.fit_on_texts(Traindata.keys())   #train tokenizer on speech utterances
+tokenizer.fit_on_texts(trainutterances)   #train tokenizer on speech utterances
 vocab_size = len(tokenizer.word_index)  #store vocabulary size for model input
-sequences_train = tokenizer.texts_to_sequences(Traindata.keys()) #convert words to vocabulary integers matrix
-sequences_test = tokenizer.texts_to_sequences(Testdata.keys())
+sequences_train = tokenizer.texts_to_sequences(trainutterances) #convert words to vocabulary integers matrix
+sequences_test = tokenizer.texts_to_sequences(testutterances)
 
 #apply padding
 padded_text_train = pad_sequences(sequences_train, padding='post', maxlen=10, truncating='post')
@@ -64,8 +73,6 @@ model.add(Dense(units=1, activation='softmax'))
 
 #train model
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
-trainacts = list(Traindata.values())
-testacts = list(Testdata.values())
 print(trainacts)
 model.fit(padded_text_train, trainacts, epochs=5)
 
