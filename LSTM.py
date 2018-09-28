@@ -64,8 +64,8 @@ model.add(Dense(units=1, activation='softmax'))
 
 #train model
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
-trainacts = Traindata.values()
-testacts = Testdata.values()
+trainacts = list(Traindata.values())
+testacts = list(Testdata.values())
 print(trainacts)
 model.fit(padded_text_train, trainacts, epochs=5)
 
