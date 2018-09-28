@@ -5,8 +5,8 @@ from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 
 #The dictionary with integers mapped to the speech acts.
-speechactdict = {'ack':1,'affirm':2,'confirm':3,'deny':4,'hello':5,'inform':6,'negate':7,
-                 'null':8,'repeat':9,'reqalts':10,'reqmore':11,'request':12,'restart':13,'thankyou|bye':14}
+speechactdict = {'ack':1,'affirm':2,'bye':3,'confirm':4,'deny':5,'hello':6,'inform':7,'negate':8,
+                 'null':9,'repeat':10,'reqalts':11,'reqmore':12,'request':13,'restart':14,'thankyou':15}
 
 # Splits a single line into speech acts and utterances, where speech acts are the first word on the line.
 def splitline(line):
@@ -16,6 +16,7 @@ def splitline(line):
         words = line.split()
         text = " ".join(words[1:])
         actbundle = words[0]
+        splitacts = actbundle.split('|')
         for bracketact in splitacts:
             act = bracketact.replace('()', '')
             actnr = speechactdict[act]
@@ -47,27 +48,30 @@ Testdata = splittext("Test set/testdata.txt")
 tokenizer = Tokenizer(oov_token=999)
 tokenizer.fit_on_texts(Traindata.keys())   #train tokenizer on speech utterances
 vocab_size = len(tokenizer.word_index)  #store vocabulary size for model input
-sequences = tokenizer.texts_to_sequences(Traindata.keys()) #convert words to vocabulary integers matrix
+sequences_train = tokenizer.texts_to_sequences(Traindata.keys()) #convert words to vocabulary integers matrix
+sequences_test = tokenizer.texts_to_sequences(Testdata.keys())
 
 #apply padding
-padded_text = pad_sequences(sequences, padding='post', maxlen=10, truncating='post')
+padded_text_train = pad_sequences(sequences_train, padding='post', maxlen=10, truncating='post')
+padded_text_test = pad_sequences(sequences_test, padding='post', maxlen=10, truncating='post')
 print(tokenizer.word_index)
-print(padded_text)
 
 #create LSTM
 model = Sequential()
 model.add(Embedding(input_dim=vocab_size+1, mask_zero=True, output_dim=100, input_length=10)) #outputs 3D tensor
-model.add(LSTM(50, activation='relu'))
-model.add(Dense(units=15, activation='softmax'))
+model.add(LSTM(10, activation='relu'))
+model.add(Dense(units=1, activation='softmax'))
 
 #train model
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
-trainacts = list(Traindata.values())
-model.fit(padded_text, trainacts, epochs=2)
+trainacts = Traindata.values()
+testacts = Testdata.values()
+print(trainacts)
+model.fit(padded_text_train, trainacts, epochs=5)
 
 #test model
-#score = model.evaluate()
-#print(score)
+score = model.evaluate(padded_text_test, testacts)
+print(score)
 
 
 
