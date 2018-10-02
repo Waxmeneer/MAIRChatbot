@@ -84,4 +84,11 @@ if __name__ == "__main__":
 
 	#We then test model on the test data and print the score, which consists of the loss and accuracy. 	
 	score = model.evaluate(padded_text_test, testacts_binary)
-	print(score)
+	
+	#The program keeps looping, in which the user can let an input sentence be classified.
+	while True:
+		inp = [input("Type sentence: ")] #This has to be in a list, else the padding will pad single characters. 
+		inp = tokenizer.texts_to_sequences(inp)
+		inp = pad_sequences(inp, padding='post', maxlen=10, truncating='post')
+		cl = model.predict_classes(inp)
+		print(list(speechactdict)[cl[0]-1])
