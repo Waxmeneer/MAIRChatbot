@@ -4,6 +4,7 @@ determiners = ["a",
                "anyone",
                "anything",
                "anywhere",
+               "my",
                "such",
                "that",
                "thats",
@@ -12,9 +13,10 @@ determiners = ["a",
                "there",
                "theres",
                "this",
-               "some",
+               "some"
                ]
 
+#Joni: Shouldn't country nouns be of type "adjective"? (see blackboard)
 nouns = ["address",
          "area",
          "areas",
@@ -42,6 +44,18 @@ nouns = ["address",
          "change",
          "damn",
          "care",
+         "harbor", 
+         "house",
+         "id",
+         "list",
+         "music",
+         "moron", 
+         "pan",
+         "part",
+         "parts",
+         "park",
+         "place",   
+         "prezzo", 
          "prices",
          "range",
          "restaurant",
@@ -67,7 +81,7 @@ nouns = ["address",
          "south",
          "tuscan",
          "west",
-         "sock",
+         "sock"
          ]
 
 adjectives = ["afghan",
@@ -106,6 +120,40 @@ adjectives = ["afghan",
               "dear",
               "every",
               "else",
+              "greek", 
+              "hindi", 
+              "hungarian", 
+              "indian", 
+              "indonesian", 
+              "irish", 
+              "italian", 
+              "jamaican",
+              "japanese", 
+              "korean", 
+              "lebanese", 
+              "mediterranean", 
+              "mexican", 
+              "modern", 
+              "medium", 
+              "moroccan", 
+              "malaysian", 
+              "polish", 
+              "portuguese",
+              "persian", 
+              "polynesian", 
+              "oriental", 
+              "good", 
+              "halal",
+              "high", 
+              "international", 
+              "korea", 
+              "kosher", 
+              "north", 
+              "inner", 
+              "kind", 
+              "polynesia",
+              "moderate", 
+              "long"
               "really",
               "romania",
               "romanian",
@@ -133,12 +181,12 @@ adjectives = ["afghan",
               "south",
               "tuscan",
               "west",
-              "surprise",
+              "surprise"
               ]
 
 connectives = ["and",
                "but",
-                "so",
+                "so"
                ]
 
 #Dictionary said most verbs can be either, I mostly copied this from dictionary.com
@@ -154,10 +202,18 @@ intransitiveVerbs = ["are",
                      "does",
                      "doesnt",
                      "dont",
+                     "get", 
+                     "let", 
+                     "lets", 
+                     "looking", 
+                     "look", 
+                     "matter", 
+                     "meant", 
+                     "mind"
                      "should",
                      "was",
                      "would",
-                     "wanna",
+                     "wanna"
                      ]
 
 transitiveVerbs = ["find",
@@ -171,6 +227,15 @@ transitiveVerbs = ["find",
                    "does"
                    "doesnt",
                    "dont",
+                   "give", 
+                   "got", 
+                   "help", 
+                   "includes", 
+                   "know",  
+                   "like", 
+                   "missing", 
+                   "need", 
+                   "needs"
                    "said",
                    "says",
                    "searching",
@@ -182,7 +247,7 @@ transitiveVerbs = ["find",
                    "serving",
                    "try",
                    "trying",
-                   "want",
+                   "want"
                    ]
 
 auxiliaryVerbs = ["can",
@@ -192,19 +257,28 @@ auxiliaryVerbs = ["can",
                   "does",
                   "doesnt",
                   "dont",
+                  "have", 
+                  "has", 
+                  "is", 
+                  "may"
                   "should",
                   "was",
-                  "would",
+                  "would"
                   ]
 
 endFill = ["bye",
+           "please"
            ]
 
 beginFill = ["ah",
-            "uh",
-            "um",
-            "umh",
-            "yes",
+             "no", 
+             "oh", 
+             "ok", 
+             "okay"
+             "uh",
+             "um",
+             "umh",
+             "yes"
              ]
 
 prepositions = ["about",
@@ -212,26 +286,42 @@ prepositions = ["about",
                 "beside",
                 "for",
                 "from",
+                "in", 
+                "of", 
+                "on"
                 "then",
                 "to",
-                "with",
+                "with"
                 ]
 
 adverbs = ["alright",
            "fine",
            "again",
+           "just", 
+           "moderately", 
+           "not",
            "reasonably",
            "well",
-           "so",
+           "so"
            ]
 
-pronoun = ["something",
+pronoun = ["i", 
+           "iam", 
+           "im", 
+           "it", 
+           "its", 
+           "me", 
+           "one", 
+           "other",
+           "something",
            "they",
            "you",
-           "yourself",
+           "yourself"
            ]
 
+conjunction = ["if"]
 
-questionWords = ["what",
-                "whats",
-           ]
+questionWords = ["how",
+                 "what",
+                 "whats"
+                ]
