@@ -1,4 +1,5 @@
-determiners = ["a",
+
+word_dictionary = {"determiners" : ["a",
                "an",
                "any",
                "anyone",
@@ -17,10 +18,11 @@ determiners = ["a",
                ]
 
 #Joni: Shouldn't country nouns be of type "adjective"? (see blackboard)
-nouns = ["address",
+,"nouns" : ["address",
          "area",
          "areas",
          "barbecue",
+         "belgium",
          "bistro",
          "breath",
          "center",
@@ -78,11 +80,12 @@ nouns = ["address",
          "you",
          "yourself",
          "south",
+         "tuscan",
          "west",
          "sock"
          ]
 
-adjectives = ["afghan",
+,"adjectives" : ["afghan",
               "african",
               "american",
               "asian",
@@ -179,19 +182,16 @@ adjectives = ["afghan",
               "south",
               "tuscan",
               "west",
-              "surprise",
-              "belgium",
-              "tuscan",
+              "surprise"
               ]
 
-connectives = ["and",
+,"connectives" : ["and",
                "but",
-                "so",
-                "if"
+                "so"
                ]
 
 #Dictionary said most verbs can be either, I mostly copied this from dictionary.com
-intransitiveVerbs = ["are",
+,"intransitiveVerbs" : ["are",
                      "am",
                      "be",
                      "care",
@@ -217,7 +217,7 @@ intransitiveVerbs = ["are",
                      "wanna"
                      ]
 
-transitiveVerbs = ["find",
+,"transitiveVerbs" : ["find",
                    "care",
                    "change",
                    "damn",
@@ -251,7 +251,7 @@ transitiveVerbs = ["find",
                    "want"
                    ]
 
-auxiliaryVerbs = ["can",
+,"auxiliaryVerbs" : ["can",
                   "do",
                   "did",
                   "could",
@@ -267,11 +267,11 @@ auxiliaryVerbs = ["can",
                   "would"
                   ]
 
-endFill = ["bye",
+,"endFill" : ["bye",
            "please"
            ]
 
-beginFill = ["ah",
+,"beginFill" : ["ah",
              "no", 
              "oh", 
              "ok", 
@@ -282,7 +282,7 @@ beginFill = ["ah",
              "yes"
              ]
 
-prepositions = ["about",
+,"prepositions" : ["about",
                 "at",
                 "beside",
                 "for",
@@ -295,7 +295,7 @@ prepositions = ["about",
                 "with"
                 ]
 
-adverbs = ["alright",
+,"adverbs" : ["alright",
            "fine",
            "again",
            "just", 
@@ -306,7 +306,7 @@ adverbs = ["alright",
            "so"
            ]
 
-pronoun = ["i", 
+,"pronoun" : ["i", 
            "iam", 
            "im", 
            "it", 
@@ -320,7 +320,10 @@ pronoun = ["i",
            "yourself"
            ]
 
-questionWords = ["how",
+,"conjunction" : ["if"]
+
+,"questionWords" : ["how",
                  "what",
                  "whats"
                 ]
+}

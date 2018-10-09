@@ -1,8 +1,16 @@
 import sys, string
 import Levenshtein as ls
-def sentenceconvert(sentence, wordlist):
+import word_categories as wc
+
+#This method converts the words of a sentence to their closest ressembling words in the
+#dictionary, found in word_categories.py. The input is a string of the sentence.
+def sentenceconvert(sentence):
     st = sentence.lower()
-    wordlist = wordlist.split()
+    typelist = wc.word_dictionary.values()
+    wordlist = []
+    for type in typelist:
+        for word in type:
+            wordlist.append(word)
     newst = ''
     for letter in st:
         if letter not in set(string.punctuation): #All letters (and numbers) remain that are not punctuation.
@@ -24,5 +32,5 @@ def sentenceconvert(sentence, wordlist):
     print(split)
 
 
-sentenceconvert(sys.argv[1], sys.argv[2])
+sentenceconvert(sys.argv[1])
  
