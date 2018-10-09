@@ -190,7 +190,8 @@ word_dictionary = {
     "connectives": [
         "and",
         "but",
-        "so"
+        "so",
+        "if"
     ],
 
     #Dictionary said most verbs can be either, I mostly copied this from dictionary.com
@@ -326,10 +327,6 @@ word_dictionary = {
         "they",
         "you",
         "yourself"
-    ],
-
-    "conjunction": [
-        "if"
     ],
 
     "questionWords": [
