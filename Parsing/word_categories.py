@@ -210,7 +210,6 @@ word_dictionary = {
         "dont",
         "get",
         "let",
-        "lets",
         "looking",
         "look",
         "matter",
