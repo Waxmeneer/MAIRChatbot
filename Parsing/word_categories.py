@@ -21,7 +21,6 @@ nouns = ["address",
          "area",
          "areas",
          "barbecue",
-         "belgium",
          "bistro",
          "breath",
          "center",
@@ -79,7 +78,6 @@ nouns = ["address",
          "you",
          "yourself",
          "south",
-         "tuscan",
          "west",
          "sock"
          ]
@@ -181,12 +179,15 @@ adjectives = ["afghan",
               "south",
               "tuscan",
               "west",
-              "surprise"
+              "surprise",
+              "belgium",
+              "tuscan",
               ]
 
 connectives = ["and",
                "but",
-                "so"
+                "so",
+                "if"
                ]
 
 #Dictionary said most verbs can be either, I mostly copied this from dictionary.com
@@ -318,8 +319,6 @@ pronoun = ["i",
            "you",
            "yourself"
            ]
-
-conjunction = ["if"]
 
 questionWords = ["how",
                  "what",
