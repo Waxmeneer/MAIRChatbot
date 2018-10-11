@@ -88,6 +88,7 @@ word_dictionary = {
 
     "adjectives": [
         "afghan",
+        "other",
         "african",
         "american",
         "asian",
@@ -316,24 +317,22 @@ word_dictionary = {
     ],
 
     "pronoun": [
-        "i",
+       
         "it",
         "its",
         "me",
         "one",
-        "other",
         "something",
         "they",
         "you",
         "yourself"
     ],
 
-    "questionWords": [
-        "how",
-        "what"
-    ],
-
     "sentence": [
+         "i",
+    
+          "how",
+        "what"
         "theres",
         "thats",
         "whats",
