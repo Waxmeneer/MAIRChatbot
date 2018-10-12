@@ -318,7 +318,9 @@ type_dictionary = {
         "serving",
         "try",
         "trying",
-        "want"
+        "want",
+        "is",
+        "was"
     ],
 #auxiliary verbs
     "(np\s)/(np\s)": [
@@ -331,10 +333,8 @@ type_dictionary = {
         "dont",
         "have",
         "has",
-        "is",
         "may"
         "should",
-        "was",
         "would"
     ],
 
