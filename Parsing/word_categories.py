@@ -128,6 +128,7 @@ type_dictionary = {
 
 #adjectives
     "n/n": [
+        "priced",
         "pan",
         "house",
         "harbor",
@@ -354,7 +355,7 @@ type_dictionary = {
         "yes",
         "sorry"
     ],
-
+#TODO
     "prepositions": [
         "about",
         "at",
