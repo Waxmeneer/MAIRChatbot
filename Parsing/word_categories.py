@@ -1,7 +1,107 @@
 
-word_dictionary = {
-
-    "determiners": [
+type_dictionary = {
+#nounphrases
+    "np": [
+        "address",
+        "area",
+        "areas",
+        "barbecue",
+        "breath",
+        "center",
+        "city",
+        "food",
+        "foods",
+        "class",
+        "canapes",
+        "centre",
+        "crossover",
+        "downtown",
+        "gastro",
+        "gastropub",
+        "east",
+        "chiquito",
+        "change",
+        "damn",
+        "care",
+        "harbor",
+        "house",
+        "list",
+        "music",
+        "moron",
+        "part",
+        "parts",
+        "park",
+        "place",
+        "prices",
+        "range",
+        "restaurant",
+        "restaurants",
+        "rice",
+        "side",
+        "system",
+        "thing",
+        "time",
+        "town",
+        "type",
+        "venue",
+        "venues",
+        "world",
+        "south",
+        "west",
+        "sock"
+    ],
+#nouns
+    "n": [
+        "address",
+        "area",
+        "areas",
+        "barbecue",
+        "breath",
+        "center",
+        "city",
+        "food",
+        "foods",
+        "class",
+        "canapes",
+        "centre",
+        "crossover",
+        "downtown",
+        "gastro",
+        "gastropub",
+        "east",
+        "chiquito",
+        "change",
+        "damn",
+        "care",
+        "harbor",
+        "house",
+        "list",
+        "music",
+        "moron",
+        "part",
+        "parts",
+        "park",
+        "place",
+        "prices",
+        "range",
+        "restaurant",
+        "restaurants",
+        "rice",
+        "side",
+        "system",
+        "thing",
+        "time",
+        "town",
+        "type",
+        "venue",
+        "venues",
+        "world",
+        "south",
+        "west",
+        "sock"
+    ],
+#determiners
+    "np/n": [
         "a",
         "an",
         "any",
@@ -18,77 +118,38 @@ word_dictionary = {
         "some"
     ],
 
-    "nouns": [
-        "address",
-        "area",
-        "areas",
-        "barbecue",
-        "belgium",
-        "bistro",
-        "breath",
-        "center",
-        "christmas",
-        "city",
-        "fish",
-        "food",
-        "foods",
-        "class",
-        "fusion",
-        "cambridge",
-        "canapes",
-        "centre",
-        "crossover",
-        "downtown",
-        "gastro",
-        "gastropub",
-        "east",
-        "chiquito",
-        "change",
-        "damn",
-        "care",
-        "harbor",
-        "house",
-        "id",
-        "list",
-        "music",
-        "moron",
-        "pan",
-        "part",
-        "parts",
-        "park",
-        "place",
-        "prezzo",
-        "prices",
-        "range",
-        "restaurant",
-        "restaurants",
-        "rice",
-        "sea",
-        "seafood",
-        "side",
-        "something",
-        "steak",
-        "steakhouse",
-        "system",
-        "they",
-        "thing",
-        "time",
-        "town",
-        "type",
-        "venue",
-        "venues",
-        "world",
-        "you",
-        "yourself",
-        "south",
-        "tuscan",
-        "west",
-        "sock"
+    "(np\np)/(np\s)": [
+        "that"
     ],
 
-    "adjectives": [
+    "(n\n)/(np\s)": [
+        "that"
+    ],
+
+#adjectives
+    "n/n": [
+        "pan",
+        "house",
+        "harbor",
+        "christmas",
+        "barbecue",
+        "sea",
+        "gastro",
+        "gastropub",
+        "seafood",
+        "gastro",
+        "prezzo",
+        "gastro",
+        "canapes",
+        "cambridge",
+        "fusion",
+        "christmas",
+        "barbecue",
+        "fish",
+        "bistro",
+        "belgium",
+        "tuscan",
         "afghan",
-        "other",
         "african",
         "american",
         "asian",
@@ -167,7 +228,6 @@ word_dictionary = {
         "scottish",
         "singapore",
         "singaporean",
-        "sorry",
         "spanish",
         "swedish",
         "swiss",
@@ -185,18 +245,21 @@ word_dictionary = {
         "south",
         "tuscan",
         "west",
-        "surprise"
+        "surprise",
+        "steak",
+        "steakhouse",
     ],
 
-    "connectives": [
+#connectives
+    "(s\s)/s": [
         "and",
         "but",
         "so",
         "if"
     ],
 
-    #Dictionary said most verbs can be either, I mostly copied this from dictionary.com
-    "intransitiveVerbs": [
+#intransitive verb
+    "np\s": [
         "are",
         "am",
         "be",
@@ -221,7 +284,8 @@ word_dictionary = {
         "would"
     ],
 
-    "transitiveVerbs": [
+#transitive verbs
+    "(np\s)/np": [
         "find",
         "care",
         "change",
@@ -255,8 +319,8 @@ word_dictionary = {
         "trying",
         "want"
     ],
-
-    "auxiliaryVerbs": [
+#auxiliary verbs
+    "(np\s)/(np\s)": [
         "can",
         "do",
         "did",
@@ -273,12 +337,12 @@ word_dictionary = {
         "would"
     ],
 
-    "endFill": [
+    "s/s": [
         "bye",
         "please"
     ],
 
-    "beginFill" : [
+    "s\s": [
         "ah",
         "no",
         "oh",
@@ -287,7 +351,8 @@ word_dictionary = {
         "uh",
         "um",
         "umh",
-        "yes"
+        "yes",
+        "sorry"
     ],
 
     "prepositions": [
@@ -303,36 +368,39 @@ word_dictionary = {
         "to",
         "with"
     ],
-
-    "adverbs": [
+#adverbs
+    "s\s": [
         "alright",
         "fine",
         "again",
         "just",
-        "moderately",
         "not",
-        "reasonably",
         "well",
         "so"
     ],
 
-    "pronoun": [
-       
+    "(n/n)/(n/n)": [
+        "reasonably",
+        "moderately",
+    ],
+#pronoun
+    "s/(np\s)": [
+        "i",
         "it",
         "its",
         "me",
         "one",
+        "other",
         "something",
         "they",
         "you",
         "yourself"
     ],
 
-    "sentence": [
-         "i",
-    
-          "how",
-        "what"
+#sentence
+    "s": [
+        "how",
+        "what",
         "theres",
         "thats",
         "whats",
@@ -340,6 +408,7 @@ word_dictionary = {
         "iam",
         "im",
         "wanna",
-        "lets"
+        "lets",
+        "id"
     ]
 }
