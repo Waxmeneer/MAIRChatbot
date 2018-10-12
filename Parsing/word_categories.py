@@ -319,6 +319,7 @@ type_dictionary = {
         "try",
         "trying",
         "want",
+        "about",
         "is",
         "was"
     ],
