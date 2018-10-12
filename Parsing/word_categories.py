@@ -386,6 +386,7 @@ type_dictionary = {
     ],
 #pronoun
     "s/(np\s)": [
+        "what",
         "i",
         "it",
         "its",
@@ -401,7 +402,6 @@ type_dictionary = {
 #sentence
     "s": [
         "how",
-        "what",
         "theres",
         "thats",
         "whats",
