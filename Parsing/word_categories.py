@@ -356,8 +356,8 @@ type_dictionary = {
         "yes",
         "sorry"
     ],
-#TODO
-    "prepositions": [
+#prepostions
+    "pp/np": [
         "about",
         "at",
         "beside",
