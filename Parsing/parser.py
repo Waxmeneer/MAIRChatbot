@@ -66,7 +66,7 @@ def parsetypes(type1, type2):
             newtype = '/'.join(type1split[:len(type1split)-1])
             if len(type2split)>1:
                 rejoined = '/'.join(type2split[1:])
-                newtype+='/' + rejoined
+                newtype+='/' + rejoined #Review this!
             print(type1 +' + '+type2 +' = '+newtype + '  - /-elimination')
             return newtype #This rejoins all the elements but the last, again separated by /.
     type1split = type1.split('\\')
@@ -105,6 +105,7 @@ def parsesentence(sentence):
     
     
 if __name__ == "__main__":
-    sentence = sys.argv[1]
-    print(parsesentence(sentence))
+    while True:          
+        inp = input("Sentence to be parsed?")
+        print(parsesentence(inp))
     
