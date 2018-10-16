@@ -338,7 +338,9 @@ type_dictionary = {
         "should",
         "would"
     ],
-
+    "(s\s)/pp":[
+        "looking"
+    ],
     "s/s": [
         "bye",
         "please"
