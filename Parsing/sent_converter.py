@@ -4,9 +4,9 @@ import word_categories as wc
 
 #This method converts the words of a sentence to their closest ressembling words in the
 #dictionary, found in word_categories.py. The input is a string of the sentence.
-def sentenceconvert(sentence):
+def convertsentence(sentence):
     st = sentence.lower()
-    typelist = wc.word_dictionary.values()
+    typelist = wc.type_dictionary.values()
     wordlist = []
     for type in typelist:
         for word in type:
@@ -29,8 +29,9 @@ def sentenceconvert(sentence):
                     bestword = compareword
             split[c]=bestword
         c+=1
-    print(split)
+    return split
 
 
-sentenceconvert(sys.argv[1])
+if __name__ == "__main__":
+    convertsentence(sys.argv[1])
  
