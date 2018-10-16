@@ -105,7 +105,9 @@ def parsesentence(sentence):
     
     
 if __name__ == "__main__":
-    while True:          
+    while True:
         inp = input("Sentence to be parsed?")
         print(parsesentence(inp))
+        taglist = []
+        parsedsentences = []
     
