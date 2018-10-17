@@ -86,12 +86,16 @@ def parsetypes(type1, word1, type2, word2):
             return [newtype, "'"+word1 +"'"+ ': ' + type1 +  '   \\-elimination   ' + "'"+word2+"'" +  ': ' +  type2 +'  == ' + "'"+word1 + ' ' + word2+"'" + ': ' + newtype]
     return None
 
+
+
+#This function removes the outer brackets of a type and returns the result, regardless of whether it actually removed them.
+
+#When the amounts of brackets are equal, the first bracket is matched. If that does not occur at the end of the string
+#the normal string is returned, else one without the brackets.
 def remouterbracks(string):
-    c=0
-    #When the amounts of brackets are equal, the first bracket is matched. If that does not occur at the end of the string
-    #the normal string is returned, else one without the brackets.
     leftbrackamt = 0
     rightbrackamt =0
+    c=0
     while c<len(string):
         if string[c]=='(':
             leftbrackamt+=1
@@ -104,7 +108,8 @@ def remouterbracks(string):
         c+=1
     return string
 
-#Splits a given type into two, splitting on a forward slash
+#This function splits a given type into two, splitting on a forward slash
+#It avoids splitting within brackets, when the brackets are not brackets around the whole type.
 def splitforslash(string):
     string = remouterbracks(string)
     strlen = len(string)
@@ -151,8 +156,8 @@ def splitbackslash(string):
     return None
 
         
-#Main function!
-#Takes in a sentence string and outputs the smallest possible parse.
+#This is the main function of the program.
+#It takes in a sentence string and outputs the smallest possible parses. There may be more than one smallest parse.
 def parsesentence(sentence):
     labels = labelwordtypes(sentence)
     wordtypes = labels[0]
@@ -165,15 +170,24 @@ def parsesentence(sentence):
         mergetypes(taggedsent, taggedsent, words, [words], []) #puts all maximally parsed sentences in the list: parsedsentences.
     leasttypesent = 100 #arbitrary
     smallestparses = []
-    for parsedsent in parsedsentences:
+    for parsedsent in parsedsentences: #Here it finds the lowest amount of types in the parsedsentences list.
         if len(parsedsent[0])<leasttypesent:
             leasttypesent=len(parsedsent[0])
-    for parsedsent in parsedsentences:
+    for parsedsent in parsedsentences: #Here, it puts all parses in a list if they have an amount of types equal to the lowest amount. 
         if len(parsedsent[0])==leasttypesent and parsedsent not in smallestparses:
             smallestparses.append(parsedsent)
     return smallestparses
-    
-    
+
+#When the function is called for part 3, it just returns the steps in which the words were parsed together. 
+def wordparsesteps(sentence):
+    smallestparses = parsesentence(sentence)
+    for item in smallestparses:
+        if item[0]=='s':
+            return item[3]
+    firstitem = smallestparses[0]
+    return firstitem[3]
+
+
 if __name__ == "__main__":
     while True:
         inp = input("Sentence to be parsed? ")
