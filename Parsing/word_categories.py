@@ -410,7 +410,8 @@ type_dictionary = {
 
     "(np\\np)/np": [
         "serving",
-        "in"
+        "in",
+        "of"
     ],
 
 #transitive verbs
@@ -464,6 +465,7 @@ type_dictionary = {
         "has",
         "may"
         "should",
+        "wanna",
         "would"
     ],
     "(s\s)/pp":[
@@ -486,7 +488,7 @@ type_dictionary = {
         "on"
         "then",
         "to",
-        "with"
+        "with" 
     ],
 #adverbs
     "s\s": [
@@ -497,7 +499,7 @@ type_dictionary = {
         "just",
         "not",
         "well",
-        "so"
+        "so",
 #fill
         "ah",
         "no",
@@ -508,7 +510,8 @@ type_dictionary = {
         "um",
         "umh",
         "yes",
-        "sorry"
+        "sorry",
+        "please"
     ],
 
     "(n/n)/(n/n)": [
