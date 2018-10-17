@@ -159,9 +159,6 @@ def parsetypes2(type1_original, type2_original):
     type1 = break_type_into_two(type1_original)
     type2 = break_type_into_two(type2_original)
 
-    pprint(type1)
-    pprint(type2)
-
     if (type(type1) != str):
         if ((type1[2] == '/') and (type1[1] == type2_original )):
             print(type1_original + ' + ' + type2_original + ' = ' + type1[0] + '  - /-elimination')
