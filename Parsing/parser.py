@@ -36,7 +36,7 @@ def taglowestlayer(tagsentence, currenttags):
 
 #Adds to the parsedsentences  list all sentences that cannot be parsed any further.
 #Parameter sent consists of a sentence, containing a list of possible types for each word.
-def mergetypes(sent, orig, words, parseinfolist): 
+def mergetypes(sent, orig, words, wordsentlist, parseinfolist): 
     c=0
     parsed = False
     while c+1<len(sent): #The last word of a sentence can obviously not be parsed, when evaluating to the right side.          
@@ -49,14 +49,19 @@ def mergetypes(sent, orig, words, parseinfolist):
             copied = sent.copy()
             copied[c]=parseinfo[0]
             del copied[c+1]
+            
             wordsc = words.copy()
             wordsc[c]=wordsc[c]+' ' + wordsc[c+1]
             del wordsc[c+1]
+
+            wordsentlist= wordsentlist.copy()
+            wordsentlist.append(wordsc)
             parsed = True
-            mergetypes(copied, orig, wordsc, newlist)
+            
+            mergetypes(copied, orig, wordsc, wordsentlist, newlist)
         c+=1
     if parsed==False:
-        parsedsentences.append([sent, orig, words, parseinfolist])
+        parsedsentences.append([sent, orig, words, wordsentlist, parseinfolist])
         
 
 #Merges two types into the new type and returns this type. 
@@ -157,7 +162,7 @@ def parsesentence(sentence):
     #print(taglist)
     print('')
     for taggedsent in taglist:
-        mergetypes(taggedsent, taggedsent, words, []) #puts all maximally parsed sentences in the list: parsedsentences.
+        mergetypes(taggedsent, taggedsent, words, [words], []) #puts all maximally parsed sentences in the list: parsedsentences.
     leasttypesent = 100 #arbitrary
     smallestparses = []
     for parsedsent in parsedsentences:
@@ -177,7 +182,7 @@ if __name__ == "__main__":
         for item in smallestparses:
             if item[0] not in results:
                 print("Initial types: " + str(item[1]), end='\n\n')
-                parseinfolist=item[3]
+                parseinfolist=item[4]
                 for parse in parseinfolist:
                     print(parse[1], end='\n')
                 print('\n')
