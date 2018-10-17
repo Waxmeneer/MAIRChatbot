@@ -409,7 +409,8 @@ type_dictionary = {
     ],
 
     "(np\\np)/np": [
-        "serving"
+        "serving",
+        "in"
     ],
 
 #transitive verbs
