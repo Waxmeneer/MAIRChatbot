@@ -1,3 +1,6 @@
+#This python file takes in sentences when called via console.
+#It then parses this sentence into a final type, and shows all steps.
+
 from word_categories import type_dictionary
 from sent_converter import convertsentence as convsent
 
