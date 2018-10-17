@@ -408,6 +408,10 @@ type_dictionary = {
         "would"
     ],
 
+    "(np\\np)/np": [
+        "serving"
+    ],
+
 #transitive verbs
     "(np\s)/np": [
         "find",
