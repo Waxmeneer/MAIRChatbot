@@ -1,4 +1,3 @@
-
 type_dictionary = {
 #nounphrases
     "np": [
@@ -100,32 +99,9 @@ type_dictionary = {
         "west",
         "sock"
     ],
-#determiners
-    "np/n": [
-        "a",
-        "an",
-        "any",
-        "anyone",
-        "anything",
-        "anywhere",
-        "my",
-        "such",
-        "that",
-        "the",
-        "their",
-        "there",
-        "this",
-        "some"
-    ],
-
-    "(np\np)/(np\s)": [
+    "(np\\np)/(np\s)": [
         "that"
     ],
-
-    "(n\n)/(np\s)": [
-        "that"
-    ],
-
 #adjectives
     "n/n": [
         "priced",
@@ -249,6 +225,148 @@ type_dictionary = {
         "surprise",
         "steak",
         "steakhouse",
+        "world",
+    ],
+
+    "np/n": [
+        #Determiners
+        "a",
+        "an",
+        "any",
+        "anyone",
+        "anything",
+        "anywhere",
+        "my",
+        "such",
+        "that",
+        "the",
+        "their",
+        "there",
+        "this",
+        "some",
+        #Non Determiners?
+        "priced",
+        "pan",
+        "house",
+        "harbor",
+        "christmas",
+        "barbecue",
+        "sea",
+        "gastro",
+        "gastropub",
+        "seafood",
+        "gastro",
+        "prezzo",
+        "gastro",
+        "canapes",
+        "cambridge",
+        "fusion",
+        "christmas",
+        "barbecue",
+        "fish",
+        "bistro",
+        "belgium",
+        "tuscan",
+        "afghan",
+        "african",
+        "american",
+        "asian",
+        "australasian",
+        "australian",
+        "austrian",
+        "basque",
+        "belgian",
+        "brazilian",
+        "british",
+        "caribbean",
+        "cantonese",
+        "chinese",
+        "catalan",
+        "cheap",
+        "cuban",
+        "danish",
+        "english"
+        "eritrean",
+        "european",
+        "expensive",
+        "fancy",
+        "fast",
+        "fine",
+        "french",
+        "german",
+        "creative",
+        "corsica",
+        "fusion",
+        "available",
+        "different",
+        "central",
+        "dear",
+        "every",
+        "else",
+        "greek",
+        "hindi",
+        "hungarian",
+        "indian",
+        "indonesian",
+        "irish",
+        "italian",
+        "jamaican",
+        "japanese",
+        "korean",
+        "lebanese",
+        "mediterranean",
+        "mexican",
+        "modern",
+        "medium",
+        "moroccan",
+        "malaysian",
+        "polish",
+        "portuguese",
+        "persian",
+        "polynesian",
+        "oriental",
+        "good",
+        "halal",
+        "high",
+        "international",
+        "korea",
+        "kosher",
+        "north",
+        "inner",
+        "kind",
+        "polynesia",
+        "moderate",
+        "long"
+        "really",
+        "romania",
+        "romanian",
+        "russian",
+        "scandinavia",
+        "scandinavian",
+        "scottish",
+        "singapore",
+        "singaporean",
+        "spanish",
+        "swedish",
+        "swiss",
+        "thai",
+        "thailand",
+        "traditional",
+        "turkey",
+        "turkish",
+        "unusual",
+        "vegetarian",
+        "venetian",
+        "vietnam",
+        "vietnamese",
+        "welsh",
+        "south",
+        "tuscan",
+        "west",
+        "surprise",
+        "steak",
+        "steakhouse",
+        "world",
     ],
 
 #connectives
@@ -283,6 +401,13 @@ type_dictionary = {
         "should",
         "was",
         "would"
+    ],
+
+    "(np\\np)/np": [
+        "serving",
+        "in",
+        "of",
+        "with"
     ],
 
 #transitive verbs
@@ -321,7 +446,11 @@ type_dictionary = {
         "want",
         "about",
         "is",
-        "was"
+        "was",
+        "have"
+    ],
+    "(np\s)/(n/n)": [
+        "is"
     ],
 #auxiliary verbs
     "(np\s)/(np\s)": [
@@ -336,28 +465,32 @@ type_dictionary = {
         "has",
         "may"
         "should",
+        "wanna",
         "would"
     ],
     "(s\s)/pp":[
         "looking"
     ],
     "s/s": [
+        #Transitive verbs when they are in front of the sentence, as giving a command
+        "can",
+        "do",
+        "did",
+        "could",
+        "does",
+        "doesnt",
+        "dont",
+        "have",
+        "has",
+        "may"
+        "should",
+        "wanna",
+        "would"
+        
         "bye",
         "please"
     ],
 
-    "s\s": [
-        "ah",
-        "no",
-        "oh",
-        "ok",
-        "okay"
-        "uh",
-        "um",
-        "umh",
-        "yes",
-        "sorry"
-    ],
 #prepostions
     "pp/np": [
         "about",
@@ -370,17 +503,30 @@ type_dictionary = {
         "on"
         "then",
         "to",
-        "with"
+        "with" 
     ],
 #adverbs
     "s\s": [
+        
         "alright",
         "fine",
         "again",
         "just",
         "not",
         "well",
-        "so"
+        "so",
+#fill
+        "ah",
+        "no",
+        "oh",
+        "ok",
+        "okay"
+        "uh",
+        "um",
+        "umh",
+        "yes",
+        "sorry",
+        "please"
     ],
 
     "(n/n)/(n/n)": [

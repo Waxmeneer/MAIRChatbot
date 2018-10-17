@@ -1,7 +1,6 @@
 from sent_converter import convertsentence as convsent
 from word_categories import type_dictionary
 import sys
-
 from pprint import pprint
 
 taglist=[] #List of all the combinations of types of the words at the lowest layer.
@@ -18,7 +17,7 @@ def labelwordtypes(sentence):
             if word in item[1]:
                 types.append(item[0])
         typelist.append(types)
-    return(typelist)
+    return([typelist, words])
 
 
 
@@ -35,186 +34,176 @@ def taglowestlayer(tagsentence, currenttags):
     else:
         taglist.append(currenttags)
 
-
-parsedsentences = []
 #Adds to the parsedsentences  list all sentences that cannot be parsed any further.
 #Parameter sent consists of a sentence, containing a list of possible types for each word.
-def mergetypes(sent): 
+def mergetypes(sent, orig, words, wordsentlist, parseinfolist): 
     c=0
-    parsed = False  
-    while c+1<len(sent): #The last word can obviously not be parsed.          
-        word=sent[c]
-        nextword = sent[c+1]
-        parsedtypes = parsetypes2(word, nextword)
-        if parsedtypes != None:
+    parsed = False
+    while c+1<len(sent): #The last word of a sentence can obviously not be parsed, when evaluating to the right side.          
+        type, word =sent[c], words[c]
+        nexttype, nextword = sent[c+1], words[c+1]
+        parseinfo = parsetypes(type, word, nexttype, nextword)
+        if parseinfo != None:
+            newlist = parseinfolist.copy() #Prevents one big list out of parseinfolist for type combinations that have multiple parses.
+            newlist.append(parseinfo)
             copied = sent.copy()
-            copied[c]=parsedtypes
+            copied[c]=parseinfo[0]
             del copied[c+1]
+            
+            wordsc = words.copy()
+            wordsc[c]=wordsc[c]+' ' + wordsc[c+1]
+            del wordsc[c+1]
+
+            wordsentlist= wordsentlist.copy()
+            wordsentlist.append(wordsc)
             parsed = True
-            mergetypes(copied)
+            
+            mergetypes(copied, orig, wordsc, wordsentlist, newlist)
         c+=1
     if parsed==False:
-        parsedsentences.append(sent)
+        parsedsentences.append([sent, orig, words, wordsentlist, parseinfolist])
         
 
-#Merges two types into the new type and returns this type.
-def parsetypes(type1, type2):
-    type1split = type1.split('/')
-    type2split = type2.split('/')
-    if len(type1split)>1: #If it has split on a /, the returned list will be >1.
-        rightside = type1split[len(type1split)-1]
-        if rightside==type2split[0]:
-            newtype = '/'.join(type1split[:len(type1split)-1])
-            if len(type2split)>1:
-                rejoined = '/'.join(type2split[1:])
-                newtype+='/' + rejoined #Review this!
-            print(type1 +' + '+type2 +' = '+newtype + '  - /-elimination')
-            return newtype #This rejoins all the elements but the last, again separated by /.
-    type1split = type1.split('\\')
-    type2split = type2.split('\\')
-    if len(type2split)>1:
-        leftside = type2split[0]
-        if leftside==type1split[len(type1split)-1]:
-            newtype = '/'.join(type2split[1:])
-            print(type1 +' + '+type2 +' = '+newtype + '  - \\-elimination')
-            return newtype
+#Merges two types into the new type and returns this type. 
+def parsetypes(type1, word1, type2, word2):
+    type1 = remouterbracks(type1)
+    type2 = remouterbracks(type2)
+    splitforw1 = splitforslash(type1)
+    #splitback1 = splitbackslash(type1)
+    #splitforw2 = splitforslash(type2)
+    splitback2 = splitbackslash(type2)
+    if splitforw1!=None:
+        rightelem=remouterbracks(splitforw1[1])
+        if rightelem==type2:
+            newtype=remouterbracks(splitforw1[0])
+            #print(type1 +' + '+type2 +' = '+newtype + '  - /-elimination')
+            return [newtype, "'"+word1 +"'"+ ': ' + type1 +  '   /-elimination   ' + "'"+word2+"'" +  ': ' +  type2 +'  == ' + "'"+word1 + ' ' + word2+"'" + ': ' + newtype]
+    if splitback2!=None:
+        rightelem = splitback2[0]
+        if rightelem==type1:
+            newtype=remouterbracks(splitback2[1])
+            #print(type1 +' + '+type2 +' = '+newtype + '  - \\-elimination')
+            return [newtype, "'"+word1 +"'"+ ': ' + type1 +  '   \\-elimination   ' + "'"+word2+"'" +  ': ' +  type2 +'  == ' + "'"+word1 + ' ' + word2+"'" + ': ' + newtype]
     return None
 
 
 
-#Main function!
-#Takes in a sentence string and outputs the smallest possible parse.
+#This function removes the outer brackets of a type and returns the result, regardless of whether it actually removed them.
+
+#When the amounts of brackets are equal, the first bracket is matched. If that does not occur at the end of the string
+#the normal string is returned, else one without the brackets.
+def remouterbracks(string):
+    leftbrackamt = 0
+    rightbrackamt =0
+    c=0
+    while c<len(string):
+        if string[c]=='(':
+            leftbrackamt+=1
+        elif string[c]== ')':
+            rightbrackamt+=1
+        if leftbrackamt==rightbrackamt:
+            if c==len(string)-1 and string[0]=='(':
+                return string[1:len(string)-1]
+            return string
+        c+=1
+    return string
+
+#This function splits a given type into two, splitting on a forward slash
+#It avoids splitting within brackets, when the brackets are not brackets around the whole type.
+def splitforslash(string):
+    string = remouterbracks(string)
+    strlen = len(string)
+    leftbrackamt = 0
+    rightbrackamt =0
+    c=strlen-1
+    while c>=0:
+        if string[c]==')':
+            rightbrackamt+=1
+            c-=1
+            while rightbrackamt!=leftbrackamt and c<strlen:
+                if string[c]==')':
+                        rightbrackamt+=1
+                elif string[c]=='(':
+                        leftbrackamt+=1
+                c-=1
+        if c>=0:
+            if string[c]=='/':
+                return [string[:c], string[c+1:]]
+        c-=1
+    return None
+
+#Splits a given type into two, splitting on a backslash
+def splitbackslash(string):
+    string = remouterbracks(string)
+    strlen = len(string)
+    leftbrackamt = 0
+    rightbrackamt =0
+    c=0
+    while c<strlen:
+        if string[c]=='(':
+            leftbrackamt+=1
+            c+=1
+            while rightbrackamt!=leftbrackamt and c<strlen:
+                if string[c]==')':
+                        rightbrackamt+=1
+                elif string[c]=='(':
+                        leftbrackamt+=1
+                c+=1
+        if c<strlen:
+            if string[c]=='\\':
+                return [string[:c], string[c+1:]]
+        c+=1
+    return None
+
+        
+#This is the main function of the program.
+#It takes in a sentence string and outputs the smallest possible parses. There may be more than one smallest parse.
 def parsesentence(sentence):
-    wordtypesent = labelwordtypes(sentence)
-    taglowestlayer(wordtypesent,[]) #creates all combinations of wordtypes.
-    print("Possible sentence type combinations: ")
-    pprint(taglist)
-    print('===================================')
+    labels = labelwordtypes(sentence)
+    wordtypes = labels[0]
+    words = labels[1]
+    taglowestlayer(wordtypes,[]) #creates all combinations of wordtypes.
+    #print("Possible sentence type combinations: ")
+    #print(taglist)
+    print('')
     for taggedsent in taglist:
-        print(taggedsent)
-        mergetypes(taggedsent) #puts all maximally parsed sentences in the list: parsedsentences.
-        print("Result: " + str(parsedsentences[len(parsedsentences)-1]))
-        print('') #So that each step is shown for individual sentence parses
+        mergetypes(taggedsent, taggedsent, words, [words], []) #puts all maximally parsed sentences in the list: parsedsentences.
     leasttypesent = 100 #arbitrary
     smallestparses = []
-    for parsedsent in parsedsentences:
-        if len(parsedsent)<leasttypesent:
-            leasttypesent=len(parsedsent)
-    for parsedsent in parsedsentences:
-        if len(parsedsent)==leasttypesent and parsedsent not in smallestparses:
+    for parsedsent in parsedsentences: #Here it finds the lowest amount of types in the parsedsentences list.
+        if len(parsedsent[0])<leasttypesent:
+            leasttypesent=len(parsedsent[0])
+    for parsedsent in parsedsentences: #Here, it puts all parses in a list if they have an amount of types equal to the lowest amount. 
+        if len(parsedsent[0])==leasttypesent and parsedsent not in smallestparses:
             smallestparses.append(parsedsent)
     return smallestparses
 
-
-def find_closing_bracket_position(type_given):
-    first_closing_bracket_position = 0
-    # check is there is another "(" between the first "(" and the first ")"
-    is_there_extra_bracket = (type_given[1:].split(')', 1)[0].find('(') != -1)
-    # find that char after the last ")" of the first group
-    first_closing_bracket_position = type_given.find(')', first_closing_bracket_position+1)
-    if (is_there_extra_bracket):
-        # check is there is another "(" between the second "(" and the second ")"
-        is_there_extra_bracket = (type_given[1:].split(')', 1)[0].find('(') != -1)
-        first_closing_bracket_position = type_given.find(')', first_closing_bracket_position+1)
-    return first_closing_bracket_position
-
-def break_type_into_two(type_given):
-    #check if the first char is "("
-    if (type_given[0] == '('):
-
-        first_closing_bracket_position = find_closing_bracket_position(type_given)
-
-        next_char_after_first_closing_bracket_position = first_closing_bracket_position + 1
-        try:
-            next_char_after_first_closing_bracket_char = type_given[next_char_after_first_closing_bracket_position]
-            slash_or_backslash_position = next_char_after_first_closing_bracket_position
-            # if the next char after the first ")" is "/"
-            if (next_char_after_first_closing_bracket_char == '/'):
-                # split into to by "/"
-                split1_result = (type_given[:next_char_after_first_closing_bracket_position], type_given[next_char_after_first_closing_bracket_position + 1:], next_char_after_first_closing_bracket_char)
-            # if the next char after the first ")" is "\"
-            elif (next_char_after_first_closing_bracket_char == '\\'):
-                # split into to by "\"
-                split1_result = (type_given[:next_char_after_first_closing_bracket_position], type_given[next_char_after_first_closing_bracket_position + 1:], next_char_after_first_closing_bracket_char)
-            return split1_result
-        # if we don't have the next char
-        except IndexError:
-            #remove first "(" and first ")"
-            removed_type1 = type_given[1:-1]
-            return break_type_into_two(removed_type1)
-    else:
-        #find first "/" or first "\"
-        if ((type_given.find('/') != -1) and ( type_given.find('\\') != -1)):
-            slash_or_backslash_position = min(type_given.find('/'), type_given.find('\\'))
-            return(type_given[:slash_or_backslash_position], type_given[slash_or_backslash_position + 1:], type_given[slash_or_backslash_position])
-        elif ((type_given.find('/') != -1) or (type_given.find('\\') != -1)):
-            slash_or_backslash_position = max(type_given.find('/'), type_given.find('\\'))
-            return(type_given[:slash_or_backslash_position], type_given[slash_or_backslash_position+1:], type_given[slash_or_backslash_position])
-        else:
-            return type_given
-
-# Merges two types into the new type and returns this type.
-def parsetypes2(type1_original, type2_original):
-
-    type1 = break_type_into_two(type1_original)
-    type2 = break_type_into_two(type2_original)
-
-    if (type(type1) != str):
-        if ((type1[2] == '/') and (type1[1] == type2_original )):
-            print(type1_original + ' + ' + type2_original + ' = ' + type1[0] + '  - /-elimination')
-            return type1[0]
-    elif (type(type2) != str):
-        if ((type2[2] == '\\') and (type2[1] == type1_original)):
-            print(type1_original + ' + ' + type2_original + ' = ' + type2[0] + '  - \\-elimination')
-            return type2[0]
-
-    return None
+#When the function is called for part 3, it just returns the steps in which the words were parsed together. 
+def wordparsesteps(sentence):
+    smallestparses = parsesentence(sentence)
+    for item in smallestparses:
+        if item[0]=='s':
+            return item[3]
+    firstitem = smallestparses[0]
+    return firstitem[3]
 
 
 if __name__ == "__main__":
     while True:
-        inp = input("Sentence to be parsed?")
-        print(parsesentence(inp))
+        inp = input("Sentence to be parsed? ")
+        smallestparses = parsesentence(inp)
+        results=[]
+        for item in smallestparses:
+            if item[0] not in results:
+                print("Initial types: " + str(item[1]), end='\n\n')
+                parseinfolist=item[4]
+                for parse in parseinfolist:
+                    print(parse[1], end='\n')
+                print('\n')
+                print(item[2])
+                print('with resulting types: ' + str(item[0]))
+                results.append(item[0])
+                print('\n\n')
         taglist = []
-        parsedsentences = []        
-
-
-#For testing
-'''
-    pprint(parsetypes2('s/(np\\s)', '(np\\s)'))
-    pprint(parsetypes2('(np/np)/(np/np)', '(np/np)'))
+        parsedsentences = []
     
-result = parsetypes2('s/(np\\s)', 'np\\s')
-result = parsetypes2('(np/np)\\np', 's')
-result = parsetypes2('(np/np)/np', 's')
-result = parsetypes2('(np\\np)\\np', 's')
-
-print ('================================')
-
-result = parsetypes2('(np\\np)\\(np\\np)', 's')
-result = parsetypes2('(np/np)/(np/np)', 's')
-result = parsetypes2('(np\\np)/(np\\np)', 's')
-result = parsetypes2('(np/np)\\(np/np)', 's')
-result = parsetypes2('(np\\np)\\(np/np)', 's')
-result = parsetypes2('(np/np)\\(np\\np)', 's')
-result = parsetypes2('(np\\np)/(np/np)', 's')
-result = parsetypes2('(np/np)/(np\\np)', 's')
-
-
-print ('================================')
-
-result = parsetypes2('np\\(np\\np)', 's')
-result = parsetypes2('np\\(np/np)', 's')
-result = parsetypes2('np/(np\\np)', 's')
-result = parsetypes2('np/(np/np)', 's')
-
-print ('================================')
-
-result = parsetypes2('np\\n', 's')
-result = parsetypes2('np/n', 's')
-
-result = parsetypes2('(np/n)', 's')
-result = parsetypes2('(np\\n)', 's')
-
-result = parsetypes2('((np/n)/n)/np', 's')
-'''
