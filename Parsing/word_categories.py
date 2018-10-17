@@ -102,11 +102,6 @@ type_dictionary = {
     "(np\\np)/(np\s)": [
         "that"
     ],
-
-    "(n\\n)/(np\s)": [
-        "that"
-    ],
-
 #adjectives
     "n/n": [
         "priced",
@@ -411,7 +406,8 @@ type_dictionary = {
     "(np\\np)/np": [
         "serving",
         "in",
-        "of"
+        "of",
+        "with"
     ],
 
 #transitive verbs
@@ -450,7 +446,11 @@ type_dictionary = {
         "want",
         "about",
         "is",
-        "was"
+        "was",
+        "have"
+    ],
+    "(np\s)/(n/n)": [
+        "is"
     ],
 #auxiliary verbs
     "(np\s)/(np\s)": [
@@ -472,6 +472,21 @@ type_dictionary = {
         "looking"
     ],
     "s/s": [
+        #Transitive verbs when they are in front of the sentence, as giving a command
+        "can",
+        "do",
+        "did",
+        "could",
+        "does",
+        "doesnt",
+        "dont",
+        "have",
+        "has",
+        "may"
+        "should",
+        "wanna",
+        "would"
+        
         "bye",
         "please"
     ],
