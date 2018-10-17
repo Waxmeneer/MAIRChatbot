@@ -1,6 +1,7 @@
 import json
 import word_categories
-
+from sent_parser import wordparsesteps
+import os
 variable_keyword_link = {
     "area": ["town", "part"],
     "food": ["restaurant", "food"],
@@ -14,7 +15,7 @@ parsed_sentence = ["i want chinese food", "i", "want chinese food", "want", "chi
 parsed_sentence_full = "i want chinese food in the south part of town"
 
 #specify path
-with open('C:/Users/User/Studie/MAIR/Git Chatbot/MAIRChatbot/Parsing/ontology_dstc2.json') as d:
+with open(os.getcwd() + '/ontology_dstc2.json') as d:
     ontology_dstc2 = json.load(d)
     informable_dict = ontology_dstc2["informable"]
 
@@ -24,7 +25,6 @@ def user_preference_identifier(parsed_sentence):
     slot_list = []
 
     found_word_list = []
-
     for key, value in informable_dict.items():
         print(key)
         found_word_list.clear()
@@ -42,6 +42,7 @@ def user_preference_identifier(parsed_sentence):
 
 def substring_finder(found_word_list, parsed_sentence):
     substring_list = []
+    print(parsed_sentence)
     for substring in parsed_sentence:
         if all(word in substring for word in found_word_list):
             substring_list.append(substring)
@@ -82,5 +83,9 @@ def duplicate_remover(list):
     return no_duplicates_list
 
 if __name__ == "__main__":
-    user_preference_identifier(parsed_sentence)
+    while True:
+        inp= input("Find user preference. Sentence? ")
+        parsed_sentence = wordparsesteps(inp)
+        parsed_sentence_full=inp
+        user_preference_identifier(parsed_sentence)
 

@@ -167,7 +167,7 @@ def parsesentence(sentence):
     print('')
     for taggedsent in taglist:
         mergetypes(taggedsent, taggedsent, words, [words], []) #puts all maximally parsed sentences in the list: parsedsentences.
-    leasttypesent = 100 #arbitrary
+    leasttypesent = 100 #arbitrary high number
     smallestparses = []
     for parsedsent in parsedsentences: #Here it finds the lowest amount of types in the parsedsentences list.
         if len(parsedsent[0])<leasttypesent:
@@ -178,21 +178,29 @@ def parsesentence(sentence):
     return smallestparses
 
 #When the function is called for part 3, it just returns the steps in which the words were parsed together. 
-
 def wordparsesteps(sentence):
     smallestparses = parsesentence(sentence)
+    biglist = []
     for item in smallestparses:
         if item[0]=='s':
-            return item[3]
+            for parse in item[3]:
+                for sentpart in parse:
+                    biglist.append(parse)
+            return biglist
     firstitem = smallestparses[0]
-    return firstitem[3]
+    for parse in firstitem[3]:
+        for sentpart in parse:
+            biglist.append(sentpart)
+    return biglist
 
+#When the file is executed as main file, the user can put in a sentence.
+#This sentence is parsed, showing all steps towards the final type.
 if __name__ == "__main__":
     while True:
         inp = input("Sentence to be parsed? ")
         smallestparses = parsesentence(inp)
         results=[]
-        for item in smallestparses:
+        for item in smallestparses: #item consists of respectively: final type, the original sentence types, the parsed combinations of words and the parse information such as steps.
             if item[0] not in results:
                 print("Initial types: " + str(item[1]), end='\n\n')
                 parseinfolist=item[4]
