@@ -110,11 +110,11 @@ def splitforslash(string):
         if string[c]==')':
             rightbrackamt+=1
             c-=1
-            while rightbrackamt!=leftbrackamt:
+            while rightbrackamt!=leftbrackamt and c<strlen:
                 if string[c]==')':
-                    rightbrackamt+=1
+                        rightbrackamt+=1
                 elif string[c]=='(':
-                    leftbrackamt+=1
+                        leftbrackamt+=1
                 c-=1
         if c>=0:
             if string[c]=='/':
@@ -133,11 +133,11 @@ def splitbackslash(string):
         if string[c]=='(':
             leftbrackamt+=1
             c+=1
-            while rightbrackamt!=leftbrackamt:
+            while rightbrackamt!=leftbrackamt and c<strlen:
                 if string[c]==')':
-                    rightbrackamt+=1
+                        rightbrackamt+=1
                 elif string[c]=='(':
-                    leftbrackamt+=1
+                        leftbrackamt+=1
                 c+=1
         if c<strlen:
             if string[c]=='\\':
