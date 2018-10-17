@@ -1,7 +1,5 @@
-from sent_converter import convertsentence as convsent
 from word_categories import type_dictionary
-import sys
-from pprint import pprint
+from sent_converter import convertsentence as convsent
 
 taglist=[] #List of all the combinations of types of the words at the lowest layer.
 parsedsentences = [] #All sentences that are not able to be parsed any further. 
@@ -155,6 +153,7 @@ def splitbackslash(string):
         c+=1
     return None
 
+
         
 #This is the main function of the program.
 #It takes in a sentence string and outputs the smallest possible parses. There may be more than one smallest parse.
@@ -179,6 +178,7 @@ def parsesentence(sentence):
     return smallestparses
 
 #When the function is called for part 3, it just returns the steps in which the words were parsed together. 
+
 def wordparsesteps(sentence):
     smallestparses = parsesentence(sentence)
     for item in smallestparses:
@@ -186,7 +186,6 @@ def wordparsesteps(sentence):
             return item[3]
     firstitem = smallestparses[0]
     return firstitem[3]
-
 
 if __name__ == "__main__":
     while True:
@@ -206,4 +205,3 @@ if __name__ == "__main__":
                 print('\n\n')
         taglist = []
         parsedsentences = []
-    
