@@ -1,4 +1,3 @@
-
 type_dictionary = {
 #nounphrases
     "np": [
@@ -100,24 +99,6 @@ type_dictionary = {
         "west",
         "sock"
     ],
-#determiners
-    "np/n": [
-        "a",
-        "an",
-        "any",
-        "anyone",
-        "anything",
-        "anywhere",
-        "my",
-        "such",
-        "that",
-        "the",
-        "their",
-        "there",
-        "this",
-        "some"
-    ],
-
     "(np\\np)/(np\s)": [
         "that"
     ],
@@ -253,6 +234,22 @@ type_dictionary = {
     ],
 
     "np/n": [
+        #Determiners
+        "a",
+        "an",
+        "any",
+        "anyone",
+        "anything",
+        "anywhere",
+        "my",
+        "such",
+        "that",
+        "the",
+        "their",
+        "there",
+        "this",
+        "some",
+        #Non Determiners?
         "priced",
         "pan",
         "house",
@@ -472,18 +469,6 @@ type_dictionary = {
         "please"
     ],
 
-    "s\s": [
-        "ah",
-        "no",
-        "oh",
-        "ok",
-        "okay"
-        "uh",
-        "um",
-        "umh",
-        "yes",
-        "sorry"
-    ],
 #prepostions
     "pp/np": [
         "about",
@@ -500,6 +485,7 @@ type_dictionary = {
     ],
 #adverbs
     "s\s": [
+        
         "alright",
         "fine",
         "again",
@@ -507,6 +493,17 @@ type_dictionary = {
         "not",
         "well",
         "so"
+#fill
+        "ah",
+        "no",
+        "oh",
+        "ok",
+        "okay"
+        "uh",
+        "um",
+        "umh",
+        "yes",
+        "sorry"
     ],
 
     "(n/n)/(n/n)": [
