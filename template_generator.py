@@ -19,8 +19,7 @@ def csv_reader():
 def restaurant_finder(filled_slots, restaurant_info):
     possible_restaurants = []
     values_filled_slots = []
-    
-    #make list of slot values which are not None
+
     for key, value in filled_slots.items():
             values_filled_slots.append(str(value))
 
@@ -28,7 +27,7 @@ def restaurant_finder(filled_slots, restaurant_info):
     for restaurant in restaurant_info:
         info_elements = restaurant[1:4]
         if set(values_filled_slots).issubset(info_elements):
-            print("YES")
+            print("found restaurant")
             possible_restaurants.append(restaurant)
 
 
