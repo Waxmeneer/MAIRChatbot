@@ -37,7 +37,7 @@ def taglowestlayer(tagsentence, currenttags):
 
 #Adds to the parsedsentences  list all sentences that cannot be parsed any further.
 #Parameter sent consists of a sentence, containing a list of possible types for each word.
-def mergetypes(sent, orig, words, wordsentlist, parseinfolist): 
+def mergetypes(sent, orig, words, parseinfolist): 
     c=0
     parsed = False
     while c+1<len(sent): #The last word of a sentence can obviously not be parsed, when evaluating to the right side.          
@@ -45,46 +45,40 @@ def mergetypes(sent, orig, words, wordsentlist, parseinfolist):
         nexttype, nextword = sent[c+1], words[c+1]
         parseinfo = parsetypes(type, word, nexttype, nextword)
         if parseinfo != None:
-            newlist = parseinfolist.copy() #Prevents one big list out of parseinfolist for type combinations that have multiple parses.
-            newlist.append(parseinfo)
-            copied = sent.copy()
-            copied[c]=parseinfo[0]
-            del copied[c+1]
+            parseinfolistc = parseinfolist.copy() #Prevents one big list out of parseinfolist for type combinations that have multiple parses.
+            parseinfolistc.append(parseinfo)
+            
+            sentc = sent.copy()
+            sentc[c]=parseinfo[0][0] #First element of the parseinfo list is the newtype.
+            del sentc[c+1]
             
             wordsc = words.copy()
-            wordsc[c]=wordsc[c]+' ' + wordsc[c+1]
+            wordsc[c]=parseinfo[0][1] #Second element is the merged words.
             del wordsc[c+1]
-
-            wordsentlist= wordsentlist.copy()
-            wordsentlist.append(wordsc)
             parsed = True
             
-            mergetypes(copied, orig, wordsc, wordsentlist, newlist)
+            mergetypes(sentc, orig, wordsc, parseinfolistc)
         c+=1
     if parsed==False:
-        parsedsentences.append([sent, orig, words, wordsentlist, parseinfolist])
+        parsedsentences.append([sent, orig, words, parseinfolist])
         
 
 #Merges two types into the new type and returns this type. 
 def parsetypes(type1, word1, type2, word2):
     type1 = remouterbracks(type1)
     type2 = remouterbracks(type2)
-    splitforw1 = splitforslash(type1)
-    #splitback1 = splitbackslash(type1)
-    #splitforw2 = splitforslash(type2)
-    splitback2 = splitbackslash(type2)
-    if splitforw1!=None:
-        rightelem=remouterbracks(splitforw1[1])
+    splitforw = splitforslash(type1)
+    splitback = splitbackslash(type2)
+    if splitforw!=None: #Has performed a / split.
+        rightelem=remouterbracks(splitforw[1])
         if rightelem==type2:
-            newtype=remouterbracks(splitforw1[0])
-            #print(type1 +' + '+type2 +' = '+newtype + '  - /-elimination')
-            return [newtype, "'"+word1 +"'"+ ': ' + type1 +  '   /-elimination   ' + "'"+word2+"'" +  ': ' +  type2 +'  == ' + "'"+word1 + ' ' + word2+"'" + ': ' + newtype]
-    if splitback2!=None:
-        rightelem = splitback2[0]
+            newtype=remouterbracks(splitforw[0])
+            return [[newtype, word1 + " " + word2],[type1, word1], [type2, word2], '/']
+    if splitback!=None: #Has performed a \ split.
+        rightelem = splitback[0]
         if rightelem==type1:
-            newtype=remouterbracks(splitback2[1])
-            #print(type1 +' + '+type2 +' = '+newtype + '  - \\-elimination')
-            return [newtype, "'"+word1 +"'"+ ': ' + type1 +  '   \\-elimination   ' + "'"+word2+"'" +  ': ' +  type2 +'  == ' + "'"+word1 + ' ' + word2+"'" + ': ' + newtype]
+            newtype=remouterbracks(splitback[1])
+            return [[newtype, word1 + " " + word2], [type1, word1], [type2, word2], '\\']
     return None
 
 
@@ -169,7 +163,7 @@ def parsesentence(sentence):
     #print(taglist)
     print('')
     for taggedsent in taglist:
-        mergetypes(taggedsent, taggedsent, words, [words], []) #puts all maximally parsed sentences in the list: parsedsentences.
+        mergetypes(taggedsent, taggedsent, words, []) #puts all maximally parsed sentences in the list: parsedsentences.
     leasttypesent = 100 #arbitrary high number
     smallestparses = []
     for parsedsent in parsedsentences: #Here it finds the lowest amount of types in the parsedsentences list.
@@ -184,31 +178,25 @@ def parsesentence(sentence):
 def wordparsesteps(sentence):
     smallestparses = parsesentence(sentence)
     biglist = []
-    for item in smallestparses:
-        if item[0]=='s':
-            for parse in item[3]:
-                for sentpart in parse:
-                    biglist.append(parse)
-            return biglist
-    firstitem = smallestparses[0]
-    for parse in firstitem[3]:
-        for sentpart in parse:
-            biglist.append(sentpart)
-    return biglist
+    for parse in smallestparses:
+        if parse[0]=='s': #Prefers to return a parse with an s as result.
+            return parse[3]
+    return smallestparses[0][3] #Else it just returns the first of the smallest parses.
 
 #When the file is executed as main file, the user can put in a sentence.
 #This sentence is parsed, showing all steps towards the final type.
 if __name__ == "__main__":
     while True:
         inp = input("Sentence to be parsed? ")
-        smallestparses = parsesentence(inp)
+        smallestparses = parsesentence(inp) 
         results=[]
         for item in smallestparses: #item consists of respectively: final type, the original sentence types, the parsed combinations of words and the parse information such as steps.
             if item[0] not in results:
                 print("Initial types: " + str(item[1]), end='\n\n')
-                parseinfolist=item[4]
+                parseinfolist=item[3]
                 for parse in parseinfolist:
-                    print(parse[1], end='\n')
+                    newword, word1, word2, elim = parse[0],parse[1],parse[2], parse[3] #Where a word consists of both the type and its text.
+                    print("'"+word1[1] +"'"+ ': ' + word1[0] +  '   ' + elim + '-elimination   ' + "'"+word2[1]+"'" +  ': ' +  word2[0] +'  == ' + "'"+newword[1] + "'" + ': ' + newword[0])
                 print('\n')
                 print(item[2])
                 print('with resulting types: ' + str(item[0]))
