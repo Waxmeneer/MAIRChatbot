@@ -10,60 +10,83 @@ variable_keyword_link = {
     "name": []
 }
 
-#this functions loads the ontology that is used to find the trigger words
+#this loads the ontology that is used to find the trigger words
 with open(os.getcwd() + '/ontology_dstc2.json') as d:
     ontology_dstc2 = json.load(d)
     informable_dict = ontology_dstc2["informable"]
 
 #this function takes a working parsing path and detects keywords used within. It then matches these keywords to the linked linkwords (such as chinese to food) and find the smallest substring that contains the trigger word and all linked words
-def user_preference_identifier(parsed_sentence):
+def user_preference_identifier(parsed_sent, sent):
     #list with slot values = empty
     slot_list = []
-
+    node_list = []
     found_word_list = []
     for key, value in informable_dict.items():
-        print(key)
         found_word_list.clear()
         for trigger_word in value:
-            if trigger_word in parsed_sentence_full:
+            if trigger_word in sent:
                 found_word_list.append(trigger_word)
                 for link_word in variable_keyword_link[key]:
-                    if link_word in parsed_sentence_full:
+                    if link_word in sent:
                         found_word_list.append(link_word)
-                        slot_list.append(substring_finder(found_word_list, parsed_sentence))
+                slot_list.append([key,topnode_finder(found_word_list, parsed_sent)])
 
-    no_duplicate_list = duplicate_remover(slot_list)                #this function removes all duplicates from the list, this sometimes happens if multiple linkedwords are present in a sentence
-    disjoint_checker(no_duplicate_list, parsed_sentence_full)       #This function checks if the trees are disjoint or not
-
-#this function finds the shortest substring that contains both the triggerword and all linkedwords
-def substring_finder(found_word_list, parsed_sentence):
-    substring_list = []
-    for substring in parsed_sentence:
-        if all(word in substring for word in found_word_list):
-            substring_list.append(substring)
-    shortest_substring = min(substring_list, key=len)
-    return shortest_substring
-
-#this function checks if two parsing paths are disjoint by comparing if any of the words of the substrings are present in any of the other substrings
-def disjoint_checker(no_duplicate_list, parsed_sentence_full):
-
-    parsed_sentence_full_old = parsed_sentence_full
-    for substring in no_duplicate_list:
-        cut_sentence = parsed_sentence_full_old.replace(substring, '')
-        parsed_sentence_full_old = cut_sentence
-
-    substring_length = 0
-    for substring in no_duplicate_list:
-        substring_length = substring_length + len(substring)
-
-    if len(parsed_sentence_full) == len(cut_sentence) + substring_length:
-        disjoint = True
+    slot_list = duplicate_remover(slot_list)                #this function removes all duplicates from the list, this sometimes happens if multiple linkedwords are present in a sentence
+    for slot in slot_list:
+        node_list.append(subtree_finder(slot[1], parsed_sent, []))
+    if(disjoint_checker(node_list)): #This function checks if the trees are disjoint or not
+        return None
     else:
-        disjoint = False
+        return slot_list
+        
 
-    print("Disjoint equals")
-    print(disjoint)
+#this function finds the top node of the subtree that contains both the triggerword and all linkedwords
+def topnode_finder(found_word_list, parsed_sentence):
+    subtree_list = []
+    for parse in parsed_sentence:
+        wordinf = parse[0]
+        wordstring = wordinf[1]
+        if all(word in wordstring for word in found_word_list):
+            subtree_list.append(wordstring) 
+    smallest =  min(subtree_list, key=len)
+    for node in parsed_sentence:
+        if node[0][1] == smallest:
+            return node[0] #Returns the top node of the smallest substring.
+
+#This function checks if two sets of nodes are disjoint.
+def disjoint_subtrees(nodes1, nodes2):
+    disjoint = False
+    for node in nodes1:
+        if node in nodes2:
+            disjoint = True
     return disjoint
+
+#Checks if any of the trees in a list are disjoint. If so, it returns True, else False.
+def disjoint_checker(treelist):
+    c=0
+    while c<len(treelist):
+        tree = treelist[c]
+        c2=c+1
+        while c2<len(treelist):
+            tree2 = treelist[c2]
+            if(disjoint_subtrees(tree, tree2)):
+               return True
+            c2+=1
+        c+=1
+    return False
+
+#Finds the subtree belonging to a top node.
+def subtree_finder(topnode, parsed_sent, nodelist):
+    nodelist.append(topnode)
+    for node in parsed_sent:
+        if node[0]==topnode:
+            subtr1 = node[1]
+            subtr2 = node[2]
+            subtree_finder(subtr1, parsed_sent, nodelist)
+            subtree_finder(subtr2, parsed_sent, nodelist)
+            return(nodelist)
+
+
 
 #this function removes duplicates from any lists that is used as input
 def duplicate_remover(list):
@@ -76,9 +99,7 @@ def duplicate_remover(list):
     return no_duplicates_list
 
 if __name__ == "__main__":
-    while True:
-        inp= input("Find user preference. Sentence? ")
-        parsed_sentence = wordparsesteps(inp)
-        parsed_sentence_full=inp
-        user_preference_identifier(parsed_sentence)
+    inp= input("Find user preference. Sentence? ")
+    parsed_sentence = wordparsesteps(inp)
+    print(user_preference_identifier(parsed_sentence, inp))
 
