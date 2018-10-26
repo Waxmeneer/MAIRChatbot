@@ -8,7 +8,7 @@ from LSTM import model_trainer, model_user
 #makes a list with lists of possible restaurants
 #typical element in restaurant list is [name, pricerange, area, food, phone, addr, postcode]
 def csv_reader():
-    with open('C:/Users/joniv/Documents/AI_courses/MAIR/MAIR_lab/MAIRChatbot-master/restaurantinfo.csv') as csv_file:
+    with open('restaurantinfo.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         restaurant_info = []
         for row in csv_reader:
