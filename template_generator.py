@@ -23,7 +23,14 @@ def speech_act_finder(sentence):
     speech_act = model_user(model, tokenizer, sentence)
     return speech_act
 
-def request_info_finder(restaurant, info):
+def request_info_finder(restaurant, sentence):
+    possible_requests = {"phone": ["phone"],
+                         "postcode": ["postcode", "post code"],
+                         "addr": ["addr", "address"]}
+    for key, value in possible_requests:
+        if value in sentence:
+            info = key
+
     if info == "phone":
         return "the phone number is" + str(restaurant[4])
     if info == "addr":
