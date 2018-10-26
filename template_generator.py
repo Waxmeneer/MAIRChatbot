@@ -48,9 +48,23 @@ def restaurant_finder(filled_slots, restaurant_info):
     return possible_restaurants
 
 #gets if final restaurant or not (enkelvoud of meervoud zin teruggeven)
-def template_generator(filled_slots, final_restaurant):
-    #TODO make templates
-    return " hello"
+def template_generator(filled_slots, restaurant_info, sentence, current_restaurant):
+    #ack,affirm,confirm,deny,inform,negate,null,repeat,reqalts,reqmore,request,restart
+    speech_act = speech_act_finder(sentence)
+
+    if speech_act == "hello":
+        return "what kind of restaurant would you like?"
+    if speech_act == "bye" or "thankyou":
+        #TODO
+        return "END DIALOGUE"
+    if speech_act == "request":
+        #TODO which info is asked by user?
+        return restaurant_finder(current_restaurant, info)
+    if speech_act == "inform":
+        if len(restaurant_finder(filled_slots, restaurant_info)) == 1:
+            restaurant = restaurant_finder(filled_slots, restaurant_info)
+            return str(restaurant[0]) + "is a nice place" +
+
 
 if __name__ == "__main__":
     #need to be filled in volgorde van de user als er geen slot is niks meegeven
