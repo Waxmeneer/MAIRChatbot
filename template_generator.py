@@ -1,5 +1,5 @@
 import csv
-#from LSTM import model_trainer, model_user
+from LSTM import model_trainer, model_user
 #Keep track of suggested restaurant if user wants another restaurant
 #Make templates and keep track of order in which user states preferences
 #aggregation?
@@ -15,10 +15,6 @@ def csv_reader():
             restaurant_info.append(list(row))
         restaurant_info.pop(0)
     return restaurant_info
-
-def speech_act_finder(sentence):
-    speech_act = model_user(sentence)
-    return speech_act
 
 def request_info_finder(restaurant, sentence):
     possible_requests = {"phone": ["phone"],
@@ -52,7 +48,7 @@ def restaurant_finder(filled_slots, restaurant_info):
     return possible_restaurants
 
 def template_restart():
-    return "What kind of food would you like?"
+    return "What kind of restaurant would you like?"
 
 def template_bye():
     return "Thank you for using team14 system. eet smakelijk!"
@@ -107,6 +103,7 @@ def template_generator(filled_slots, speech_act, current_suggested_restaurant):
     elif speech_act == 'restart':
         return template_restart()
 
+#joni:not restart, but search for another restaurant I guess while holding on to filled slots...
     elif speech_act == 'deny':
         return template_restart()
 
@@ -114,10 +111,11 @@ def template_generator(filled_slots, speech_act, current_suggested_restaurant):
         return template_bye()
 
     elif (speech_act == "thankyou"):
-        return template_bye
+        return template_bye()
 
-    elif (speech_act == "repeat"):
+    #elif (speech_act == "repeat"):
         #TODO I guess checking what is the previous speech act, and re do that
+        #joni: CHECK, put this in the chatbot.py so can be removed!
         return current_suggested_restaurant
 
     elif speech_act == "request":
@@ -162,7 +160,3 @@ if __name__ == "__main__":
     print(restaurant_finder(filled_slots, restaurant_info))
     #analyze speech act for every sentence
     #keep track of current restaurant
-
-
-
-
