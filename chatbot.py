@@ -38,14 +38,21 @@ def manager():
         user_sentences.append(user_sentence)
 
         # get filled slots, only if the speech act is inform
-        if speech_act == 'inform':
+        if speech_act == 'inform' \
+            or speech_act == "reqmore" \
+            or speech_act == "negate" \
+            or speech_act == "confirm" \
+            or speech_act == "affirm" \
+            or speech_act == "ack" \
+            or speech_act == "null" \
+            or speech_act == "reqalts":
             #TODO get real slots value
             get_filled_slots = {
                 "pricerange": "expensive",
                 "area": "north",
                 "food": "french"
             }
-            # STORE SLOTS VALUE
+            # STORE / update SLOTS VALUE
             filled_slots = get_filled_slots
 
             #GET POSSIBLE RESTAURANT

@@ -100,8 +100,6 @@ def template_no_restaurant_found():
 #gets if final restaurant or not (enkelvoud of meervoud zin teruggeven)
 def template_generator(filled_slots, speech_act, current_suggested_restaurant):
 
-    #ack,affirm,confirm,null,repeat,reqalts
-
     if speech_act == "hello":
         return template_hello()
 
@@ -121,13 +119,29 @@ def template_generator(filled_slots, speech_act, current_suggested_restaurant):
     elif (speech_act == "thankyou"):
         return template_bye
 
+    elif (speech_act == "repeat"):
+        #TODO I guess checking what is the previous speech act, and re do that
+        return current_suggested_restaurant
+
     elif speech_act == "request":
         #TODO which info is asked by user?
         return current_suggested_restaurant
 
     #negate is similar like inform, only usually started with "no"
-    #reqmoe system can repeat the same answer for inform
-    elif speech_act == "inform" or speech_act == "reqmore" or speech_act == "negate":
+    #reqmoe we can repeat the same answer for inform, only confirming
+    #confirm  we can repeat the same answer for inform, only confirming
+    #affirm this is also another way of confirming
+    #ack use a lot words like "um" or "okay", another way of confirming or sometimes adding more info like "hmm how about korean?"
+    #null super random, but when we return what we have in inform, it sounds still related
+    #reqalts is very similar like inform
+    elif speech_act == "inform" \
+            or speech_act == "reqmore" \
+            or speech_act == "negate" \
+            or speech_act == "confirm" \
+            or speech_act == "affirm"\
+            or speech_act == "ack"\
+            or speech_act == "null" \
+            or speech_act == "reqalts":
         # if no restaurant exists with a complete slots: give back to user and ask other preferences
         if len(current_suggested_restaurant) == 0:
             return template_no_restaurant_found()
