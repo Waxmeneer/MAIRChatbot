@@ -7,11 +7,13 @@ from keras.models import Sequential
 from keras.layers import Embedding, Dense, LSTM, Dropout
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
-
+import sys
 # The dictionary to be created with integers mapped to the speech acts. The structure is: {act:integer}
 # The count increases as a new type of act is added, ensuring that each new type of act gets a unique integer.
 speechactdict = {}
 count=1
+model = None
+tokenizer = None
 
 # Splits a single line into speech acts and utterances, where speech acts are the first word on the line.
 def splitline(line, istrainset):
@@ -44,8 +46,8 @@ def splittext(file, istrainset):
         linelist.append([utterance, act])
     return linelist
 
-if __name__ == "__main__":
-	#First the train data and test data is converted to lists of the utterances and acts. 
+def model_trainer():
+	#First the train data and test data is converted to lists of the utterances and acts.
 	trainlist = splittext("Train set/traindata.txt", True)
 	testlist = splittext("Test set/testdata.txt", False)
 	trainutterances, testutterances = [], []  # Two lists of (single element) utterances.
@@ -84,11 +86,25 @@ if __name__ == "__main__":
 
 	#We then test model on the test data and print the score, which consists of the loss and accuracy. 	
 	score = model.evaluate(padded_text_test, testacts_binary)
-	
+
+	return [model, tokenizer]
+
+def model_user(sentence):
 	#The program keeps looping, in which the user can let an input sentence be classified.
-	while True:
-		inp = [input("Type sentence: ")] #This has to be in a list, else the padding will pad single characters. 
-		inp = tokenizer.texts_to_sequences(inp)
-		inp = pad_sequences(inp, padding='post', maxlen=10, truncating='post')
-		cl = model.predict_classes(inp)
-		print(list(speechactdict)[cl[0]-1])
+	global model
+	global tokenizer
+	if model is None:
+		modelinf = model_trainer()
+		model = modelinf[0]
+		tokenizer = modelinf[1]
+
+	sentence = tokenizer.texts_to_sequences(sentence)
+	sentence = pad_sequences(sentence, padding='post', maxlen=10, truncating='post')
+	cl = model.predict_classes(sentence)
+	return(list(speechactdict)[cl[0]-1])
+
+if __name__ == "__main__":
+	modelinf = model_trainer()
+	model = modelinf[0]
+	tokenizer = modelinf[1]
+	print(model_user(model, tokenizer, sys.argv[1]))
