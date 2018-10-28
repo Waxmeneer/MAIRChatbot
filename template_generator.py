@@ -17,10 +17,7 @@ def csv_reader():
     return restaurant_info
 
 def speech_act_finder(sentence):
-    modelinf = model_trainer()
-    model = modelinf[0]
-    tokenizer = modelinf[1]
-    speech_act = model_user(model, tokenizer, sentence)
+    speech_act = model_user(sentence)
     return speech_act
 
 def request_info_finder(restaurant, sentence):
