@@ -1,5 +1,5 @@
 import csv
-from LSTM import model_trainer, model_user
+#from LSTM import model_trainer, model_user
 #Keep track of suggested restaurant if user wants another restaurant
 #Make templates and keep track of order in which user states preferences
 #aggregation?
@@ -55,22 +55,29 @@ def restaurant_finder(filled_slots, restaurant_info):
     return possible_restaurants
 
 #gets if final restaurant or not (enkelvoud of meervoud zin teruggeven)
-def template_generator(filled_slots, restaurant_info, sentence, current_restaurant):
+def template_generator(filled_slots, restaurant_info, speech_act, current_restaurant):
+
     #ack,affirm,confirm,deny,inform,negate,null,repeat,reqalts,reqmore,request,restart
-    speech_act = speech_act_finder(sentence)
 
     if speech_act == "hello":
-        return "what kind of restaurant would you like?"
-    if speech_act == "bye" or "thankyou":
-        #TODO
-        return "END DIALOGUE"
-    if speech_act == "request":
+        return "Welcome to the team14 restaurant system. You can tell your preference of area , price range or food type. How can we help?"
+
+    # if no preference / slots yet but the speech act is not inform
+    elif (not filled_slots) and (speech_act != 'inform'):
+        # ask for restaurant preference
+        return "What kind of food would you like?"
+
+    elif speech_act == "bye" or "thankyou":
+        return "Thank you for using team14 system. Bye."
+
+    elif speech_act == "request":
         #TODO which info is asked by user?
-        return restaurant_finder(current_restaurant, info)
-    if speech_act == "inform":
+        return restaurant_finder(filled_slots, restaurant_info)
+
+    elif speech_act == "inform":
         if len(restaurant_finder(filled_slots, restaurant_info)) == 1:
             restaurant = restaurant_finder(filled_slots, restaurant_info)
-            return str(restaurant[0]) + "is a nice place" +
+            return str(restaurant[0]) + "is a nice place"
 
 
 if __name__ == "__main__":
