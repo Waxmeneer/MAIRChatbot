@@ -40,7 +40,7 @@ def taglowestlayer(tagsentence, currenttags):
 def mergetypes(sent, orig, words, parseinfolist): 
     c=0
     parsed = False
-    while c+1<len(sent): #The last word of a sentence can obviously not be parsed, when evaluating to the right side.          
+    while c+1<len(sent)-1: #The last word of a sentence can obviously not be parsed, when evaluating to the right side.          
         type, word =sent[c], words[c]
         nexttype, nextword = sent[c+1], words[c+1]
         parseinfo = parsetypes(type, word, nexttype, nextword)
