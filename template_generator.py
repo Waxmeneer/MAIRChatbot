@@ -16,21 +16,30 @@ def csv_reader():
         restaurant_info.pop(0)
     return restaurant_info
 
-def request_info_finder(restaurant, sentence):
+def template_request(restaurant, sentence):
     possible_requests = {"phone": ["phone"],
                          "postcode": ["postcode", "post code"],
-                         "addr": ["addr", "address"]}
+                         "addr": ["addr", "address"],
+                         "price": ["price"],
+                         "food": ["type"],
+                         "area": ["area"]
+    }
     for key, value in possible_requests:
         if value in sentence:
             info = key
 
     if info == "phone":
         return "the phone number is" + str(restaurant[4])
-    if info == "addr":
+    elif info == "addr":
         return "the address is " + str(restaurant[5])
-    if info == "postcode":
+    elif info == "postcode":
         return "the postcode is" + str(restaurant[6])
-    return
+    elif info == "price":
+        return "the price is" + str(restaurant[1])
+    elif info == "area":
+        return "the area is" + str(restaurant[2])
+    elif info == "food":
+        return "the type of food is" + str(restaurant[3])
 
 def restaurant_finder(filled_slots, restaurant_info):
     possible_restaurants = []
@@ -91,7 +100,7 @@ def template_no_restaurant_found():
     return "We cannot find any restaurant. What other kind of restaurant you like?"
 
 #gets if final restaurant or not (enkelvoud of meervoud zin teruggeven)
-def template_generator(filled_slots, speech_act, current_suggested_restaurant):
+def template_generator(filled_slots, speech_act, current_suggested_restaurant, current_user_sentence):
 
     if speech_act == "hello":
         return template_hello()
@@ -113,14 +122,18 @@ def template_generator(filled_slots, speech_act, current_suggested_restaurant):
     elif (speech_act == "thankyou"):
         return template_bye()
 
-    #elif (speech_act == "repeat"):
-        #TODO I guess checking what is the previous speech act, and re do that
-        #joni: CHECK, put this in the chatbot.py so can be removed!
-        return current_suggested_restaurant
-
     elif speech_act == "request":
-        #TODO which info is asked by user?
-        return current_suggested_restaurant
+
+        if len(current_suggested_restaurant) == 0:
+            return template_no_restaurant_found()
+
+        # if 1 such restaurant exists: return restaurant info
+        elif len(current_suggested_restaurant) == 1:
+            return template_request(current_suggested_restaurant, current_user_sentence)
+
+        # if more: return the number of restaurants and ask for missing slot info
+        elif len(current_suggested_restaurant) > 1:
+            return template_inform_multiple_results(filled_slots, current_suggested_restaurant)
 
     #negate is similar like inform, only usually started with "no"
     #reqmoe we can repeat the same answer for inform, only confirming

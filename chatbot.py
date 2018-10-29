@@ -69,7 +69,7 @@ def manager():
         if speech_act == 'repeat':
             template_result = system_sentences[-1]
         else:
-            template_result = template_generator(filled_slots, speech_act, current_suggested_restaurant)
+            template_result = template_generator(filled_slots, speech_act, current_suggested_restaurant, user_sentence)
         #store system sentences
         system_sentences.append(template_result)
 
