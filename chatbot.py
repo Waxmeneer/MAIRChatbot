@@ -54,10 +54,9 @@ def manager():
             or speech_act == "ack" \
             or speech_act == "null" \
             or speech_act == "reqalts":
-            #TODO get real slots value (joni: don't know which part of the parser this is?
-            filled_slots.update(slot_dict(user_response))
+            
             # STORE / update SLOTS VALUE
-            filled_slots = get_filled_slots
+            filled_slots.update(slot_dict(user_response))
 
             #GET POSSIBLE RESTAURANT
             current_suggested_restaurant = restaurant_finder(filled_slots, restaurant_info)
