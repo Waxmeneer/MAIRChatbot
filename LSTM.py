@@ -47,6 +47,7 @@ def splittext(file, istrainset):
     return linelist
 
 def model_trainer():
+	global speechactdict
 	#First the train data and test data is converted to lists of the utterances and acts.
 	trainlist = splittext("Train set/traindata.txt", True)
 	testlist = splittext("Test set/testdata.txt", False)
@@ -98,13 +99,14 @@ def model_user(sentence):
 		model = modelinf[0]
 		tokenizer = modelinf[1]
 
+	sentence = [sentence]
 	sentence = tokenizer.texts_to_sequences(sentence)
 	sentence = pad_sequences(sentence, padding='post', maxlen=10, truncating='post')
 	cl = model.predict_classes(sentence)
-	return(list(speechactdict)[cl[0]-1])
+	print(cl)
+	print(speechactdict)
+	return list(speechactdict)[cl[0]-1]
 
 if __name__ == "__main__":
-	modelinf = model_trainer()
-	model = modelinf[0]
-	tokenizer = modelinf[1]
-	print(model_user(model, tokenizer, sys.argv[1]))
+	sentence = input("enter sentence: ")
+	print(model_user(sentence))
