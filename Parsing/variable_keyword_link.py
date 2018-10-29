@@ -42,19 +42,6 @@ def make_slot_list(parsed_sent, sent):
         slot_list.append([key,topnode_finder(slot_dict[key], parsed_sent)])
     return [slot_list, slot_dict_no_links]
 
-#Prints whether trees in the node_list are disjoint.
-def disjoint_printer(node_list):
-    if(node_list!=[]):
-        for node in node_list:
-            for item in node:
-                print(item[0])
-            print("")
-        if disjoint_checker(node_list):
-            print('Disjoint')
-        else:
-            print('Not disjoint')
-    else:
-        print("No potential slot fills found")
 
 #this function finds the top node of the subtree that contains both the triggerword and all linkedwords
 #If the parsing fails, it returns the words as singular words.
@@ -99,6 +86,16 @@ def joint_remover(slot_list, slot_dict, parsed_sent):
             while c2<len(treelist):
                 tree2 = treelist[c2]
                 if(joint_subtrees(tree, tree2)):
+                    """
+                    cat = slot_list[c]
+                    cat2 = slot_list[c2]
+                    slots1 = slot_dict[cat]
+                    slots2 = slot_dict[cat2]
+                    print("The keywords of \"" + ' '.join(slots) + " with subtree:")
+                    print(tree, end='\n\n')
+                    print("Is disjoint with the keywords of \"" + slot_dict[cat2] +  "\""  + " with subtree: ")
+                    print(tree2, end='\n\n')
+                    """
                     disjointlist.append(c)
                     disjointlist.append(c2)
                 c2+=1
@@ -131,7 +128,6 @@ def label_nodes(parsed_sent):
     return parsed_sent
 
 def slot_dict(inp):
-    inp= input("Find user preference. Sentence? ")
     parsed_sentence = wordparsesteps(inp)
     parsed_sentence = label_nodes(parsed_sentence)
     inp = convertsentence(inp)
@@ -145,7 +141,6 @@ if __name__ == "__main__":
     parsed_sentence = label_nodes(parsed_sentence)
     inp = convertsentence(inp)
     slot_list, slot_dict = make_slot_list(parsed_sentence, inp)[0], make_slot_list(parsed_sentence, inp)[1]
-    #disjoint_printer(user_pref[1])
     notjoint = joint_remover(slot_list, slot_dict, parsed_sentence)
     print(notjoint[1])
 
