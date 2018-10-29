@@ -136,6 +136,8 @@ def label_nodes(parsed_sent):
         c+=1
     return parsed_sent
 
+#This function is the main function. It takes in a sentence (string) and returns all filled slots, checked for jointness.
+#It checks all smallest parsed subtrees.
 def slot_dict(inp):
     smallestparses = wordparsesteps(inp)
     inp = convertsentence(inp)
