@@ -55,7 +55,7 @@ def manager():
             or speech_act == "null" \
             or speech_act == "reqalts":
             #TODO get real slots value (joni: don't know which part of the parser this is?
-            get_filled_slots = slot_dict(user_response)
+            filled_slots.update(slot_dict(user_response))
             # STORE / update SLOTS VALUE
             filled_slots = get_filled_slots
 
