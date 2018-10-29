@@ -86,14 +86,17 @@ def joint_remover(slot_list, slot_dict, parsed_sent):
             while c2<len(treelist):
                 tree2 = treelist[c2]
                 if(joint_subtrees(tree, tree2)):
+                    #These few statements print the check of jointness, with the according subtrees.
+                    #The numbers in the subtrees are indexes of the parses, so words that occur twice in a sentence
+                    #can be separated.
                     """
-                    cat = slot_list[c]
-                    cat2 = slot_list[c2]
-                    slots1 = slot_dict[cat]
-                    slots2 = slot_dict[cat2]
-                    print("The keywords of \"" + ' '.join(slots) + " with subtree:")
+                    cat1 = slot_list[c][0]
+                    keyw1 = get_keywords(slot_dict[cat1])
+                    cat2 = slot_list[c2][0]
+                    keyw2 = get_keywords(slot_dict[cat2])
+                    print("The keywords of category: \"" + cat1 + "\"" + " (" + str(keyw1)+ ")" + " with subtree:")
                     print(tree, end='\n\n')
-                    print("Is disjoint with the keywords of \"" + slot_dict[cat2] +  "\""  + " with subtree: ")
+                    print("Is disjoint with the keywords of category: \"" + cat2 + "\"" + " ("  + str(keyw2) + ")"  + " with subtree: ")
                     print(tree2, end='\n\n')
                     """
                     disjointlist.append(c)
@@ -106,6 +109,12 @@ def joint_remover(slot_list, slot_dict, parsed_sent):
         del slot_dict[category]
     return [slot_list, slot_dict]
 
+def get_keywords(category):
+    catlist = []
+    for elem in category:
+        keyw = elem[0]
+        catlist.append(keyw)
+    return catlist
 #Finds the subtree belonging to a top node.
 def subtree_finder(topnode, parsed_sent, nodelist, index):
     nodelist.append([topnode, index])
@@ -132,8 +141,8 @@ def slot_dict(inp):
     parsed_sentence = label_nodes(parsed_sentence)
     inp = convertsentence(inp)
     slot_list, slot_dict = make_slot_list(parsed_sentence, inp)[0], make_slot_list(parsed_sentence, inp)[1]
-    notjoint = joint_remover(slot_list, slot_dict, parsed_sentence)
-    return notjoint[1]
+    disjoint_dict = joint_remover(slot_list, slot_dict, parsed_sentence)
+    return disjoint_dict[1]
 
 if __name__ == "__main__":
     inp= input("Find user preference. Sentence? ")
