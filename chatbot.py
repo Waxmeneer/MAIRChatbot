@@ -1,5 +1,6 @@
 from template_generator import *
 from LSTM import model_user
+from variable_keyword_link import slot_dict
 
 user_sentences = []
 system_sentences = []
@@ -54,11 +55,7 @@ def manager():
             or speech_act == "null" \
             or speech_act == "reqalts":
             #TODO get real slots value (joni: don't know which part of the parser this is?
-            get_filled_slots = {
-                "pricerange": "expensive",
-                "area": "north",
-                "food": "french"
-            }
+            get_filled_slots = slot_dict(user_response)
             # STORE / update SLOTS VALUE
             filled_slots = get_filled_slots
 
