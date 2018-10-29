@@ -4,6 +4,7 @@
 import keras
 from keras.utils import to_categorical
 from keras.models import Sequential
+from keras.models import model_from_json
 from keras.layers import Embedding, Dense, LSTM, Dropout
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
@@ -90,23 +91,48 @@ def model_trainer():
 
 	return [model, tokenizer]
 
-def model_user(sentence):
+def load_tokenizer():
+        #First the train data and test data is converted to lists of the utterances and acts.
+        trainlist = splittext("Train set/traindata.txt", True)
+        trainutterances = []  # Two lists of (single element) utterances.
+        trainacts = []  # Two lists of (single element) acts.
+        for sentence in trainlist:
+                trainutterances.append(sentence[0])
+                trainacts.append(sentence[1])
+        #Here we create a tokenizer, which is an easy way to label a unique integer per word.
+        tokenizer = Tokenizer(oov_token=999)
+        tokenizer.fit_on_texts(trainutterances)  # train tokenizer on speech utterances
+        return tokenizer
+
+def load_model():
+        jsonmodel = open("model.json", "r")
+        readjson = jsonmodel.read()
+        jsonmodel.close()
+        model = model_from_json(readjson)
+        model.load_weights("weights.h5")
+        return model
+
+def load_speechactdict():
+        global speechactdict
+        #First the train data and test data is converted to lists of the utterances and acts.
+        trainlist = splittext("Train set/traindata.txt", True)
+        return speechactdict
+
+def model_user(sentence, model, tokenizer, speechactdict):
 	#The program keeps looping, in which the user can let an input sentence be classified.
-	global model
-	global tokenizer
-	if model is None:
-		modelinf = model_trainer()
-		model = modelinf[0]
-		tokenizer = modelinf[1]
+        sentence = [sentence]
+        sentence = tokenizer.texts_to_sequences(sentence)
+        sentence = pad_sequences(sentence, padding='post', maxlen=10, truncating='post')
+        cl = model.predict_classes(sentence)
+        return list(speechactdict)[cl[0]-1]
 
-	sentence = [sentence]
-	sentence = tokenizer.texts_to_sequences(sentence)
-	sentence = pad_sequences(sentence, padding='post', maxlen=10, truncating='post')
-	cl = model.predict_classes(sentence)
-	print(cl)
-	print(speechactdict)
-	return list(speechactdict)[cl[0]-1]
-
+def create_json_model(model):
+        jsonmodel = model.to_json()
+        file = open('model.json', "w")
+        file.write(jsonmodel)
+        model.save_weights("weights.h5")
 if __name__ == "__main__":
-	sentence = input("enter sentence: ")
-	print(model_user(sentence))
+	#sentence = input("enter sentence: ")
+        #print(model_user(sentence))
+	modelinf = model_trainer()
+	create_json_model(modelinf[0])

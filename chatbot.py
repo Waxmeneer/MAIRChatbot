@@ -1,5 +1,7 @@
+import sys
 from template_generator import *
-from LSTM import model_user
+from LSTM import model_user, model_trainer, load_tokenizer, load_model, load_speechactdict
+sys.path.insert(0, 'Parsing')
 from variable_keyword_link import slot_dict
 
 user_sentences = []
@@ -24,20 +26,20 @@ def manager():
     global filled_slots
     global system_sentences
     user_response = ''
+    model, tokenizer, speechactdict = load_model(), load_tokenizer(), load_speechactdict()
     restaurant_info = csv_reader()
-    is_welcome = True
-
+    print("Welcome to the Chatbot system: ")
+    print("What kind of restaurant are you looking for? You can ask for example for food type, area or pricerange.")
     # start dialogue
     while True:
-        # GET SPEECH ACT
-        # to check if this is just welcome
-        if is_welcome:
-            speech_act = 'hello'
         # otherwise, check what is the speech act of the user response (joni: speech act is always null?)
-        else:
-            print(user_response, "user_response")
-            speech_act = model_user(user_response)
-            print(speech_act, "is the classified speech act")
+        inp = input("user: ")
+        speech_act = model_user(inp, model, tokenizer, speechactdict)
+        print(speech_act)
+        break
+        print(user_response, "user_response")
+        #speech_act = model_user(user_response)
+        print(speech_act, "is the classified speech act")
 
         # STORE SPEECH ACT AND SENTENCE (joni: this works)
         user_sentence = {}

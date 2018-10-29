@@ -35,7 +35,7 @@ def taglowestlayer(tagsentence, currenttags):
     else:
         taglist.append(currenttags)
 
-#Adds to the parsedsentences  list all sentences that cannot be parsed any further.
+#Adds to the parsedsentences list all sentences that cannot be parsed any further.
 #Parameter sent consists of a sentence, containing a list of possible types for each word.
 def mergetypes(sent, orig, words, parseinfolist): 
     c=0
@@ -161,7 +161,7 @@ def parsesentence(sentence):
     taglowestlayer(wordtypes,[]) #creates all combinations of wordtypes.
     #print("Possible sentence type combinations: ")
     #print(taglist)
-    print('')
+    #print('')
     for taggedsent in taglist:
         mergetypes(taggedsent, taggedsent, words, []) #puts all maximally parsed sentences in the list: parsedsentences.
     leasttypesent = 100 #arbitrary high number
@@ -179,11 +179,11 @@ def wordparsesteps(sentence):
     taglist.clear()
     parsedsentences.clear()
     smallestparses = parsesentence(sentence)
-    biglist = []
-    for parse in smallestparses:
-        if parse[0]=='s': #Prefers to return a parse with an s as result.
-            return parse[3]
-    return smallestparses[0][3] #Else it just returns the first of the smallest parses.
+    return smallestparses
+
+
+def construct_alternate_parses(smallesparses):
+    pass
 
 #When the file is executed as main file, the user can put in a sentence.
 #This sentence is parsed, showing all steps towards the final type.

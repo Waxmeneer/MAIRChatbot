@@ -92,10 +92,11 @@ def template_inform_multiple_results(filled_slots, current_suggested_restaurant)
     return response
 
 def template_import_the_one(current_suggested_restaurant):
-    name = str(current_suggested_restaurant[0][0])
-    pricerange = str(current_suggested_restaurant[0][1])
-    area = str(current_suggested_restaurant[0][2])
-    food = str(current_suggested_restaurant[0][3])
+    current_suggested_restaurant = current_suggested_restaurant.pop(0)
+    name = str(current_suggested_restaurant[0])
+    pricerange = str(current_suggested_restaurant[1])
+    area = str(current_suggested_restaurant[2])
+    food = str(current_suggested_restaurant[3])
 
     if area != '':
         return '{} is a {} {} restaurant in the are of {}'.format(name, pricerange, food, area)

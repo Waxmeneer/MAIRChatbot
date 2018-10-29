@@ -33,7 +33,7 @@ def make_slot_list(parsed_sent, sent):
                     order+=1
                 else:
                     slot_dict[key]=[word]
-                    slot_dict_no_links[key]=[word, order]
+                    slot_dict_no_links[key]=[[word, order]]
                     order+=1
             if word in variable_keyword_link[key]:
                 if key in slot_dict: #Only puts the linked word in if there is already a variable word.
@@ -136,20 +136,22 @@ def label_nodes(parsed_sent):
         c+=1
     return parsed_sent
 
+#This function is the main function. It takes in a sentence (string) and returns all filled slots, checked for jointness.
+#It checks all smallest parsed subtrees.
 def slot_dict(inp):
-    parsed_sentence = wordparsesteps(inp)
-    parsed_sentence = label_nodes(parsed_sentence)
+    smallestparses = wordparsesteps(inp)
     inp = convertsentence(inp)
-    slot_list, slot_dict = make_slot_list(parsed_sentence, inp)[0], make_slot_list(parsed_sentence, inp)[1]
-    disjoint_dict = joint_remover(slot_list, slot_dict, parsed_sentence)
-    return disjoint_dict[1]
+    for parse in smallestparses:
+        parsed_sentence = parse[3]
+        parsed_sentence = label_nodes(parsed_sentence)
+        slot_list, slot_dict = make_slot_list(parsed_sentence, inp)[0], make_slot_list(parsed_sentence, inp)[1]
+        disjoint_dict = joint_remover(slot_list, slot_dict, parsed_sentence)
+        if len(disjoint_dict[1])>0:
+            return disjoint_dict[1]
+    return {}
 
 if __name__ == "__main__":
-    inp= input("Find user preference. Sentence? ")
-    parsed_sentence = wordparsesteps(inp)
-    parsed_sentence = label_nodes(parsed_sentence)
-    inp = convertsentence(inp)
-    slot_list, slot_dict = make_slot_list(parsed_sentence, inp)[0], make_slot_list(parsed_sentence, inp)[1]
-    notjoint = joint_remover(slot_list, slot_dict, parsed_sentence)
-    print(notjoint[1])
+    while True:
+        inp= input("Find user preference. Sentence? ")
+        print(slot_dict(inp))
 
