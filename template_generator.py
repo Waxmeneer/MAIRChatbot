@@ -92,7 +92,7 @@ def template_inform_multiple_results(filled_slots, current_suggested_restaurant)
     return response
 
 def template_import_the_one(current_suggested_restaurant):
-    current_suggested_restaurant = current_suggested_restaurant.pop(0)
+    current_suggested_restaurant = current_suggested_restaurant[0]
     name = str(current_suggested_restaurant[0])
     pricerange = str(current_suggested_restaurant[1])
     area = str(current_suggested_restaurant[2])

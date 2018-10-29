@@ -28,18 +28,14 @@ def manager():
     user_response = ''
     model, tokenizer, speechactdict = load_model(), load_tokenizer(), load_speechactdict()
     restaurant_info = csv_reader()
-    print("Welcome to the Chatbot system: ")
-    print("What kind of restaurant are you looking for? You can ask for example for food type, area or pricerange.")
+    is_welcome = True
     # start dialogue
     while True:
-        # otherwise, check what is the speech act of the user response (joni: speech act is always null?)
-        inp = input("user: ")
-        speech_act = model_user(inp, model, tokenizer, speechactdict)
-        print(speech_act)
-        break
-        print(user_response, "user_response")
-        #speech_act = model_user(user_response)
-        print(speech_act, "is the classified speech act")
+        # get speech act of the user input. Get hello for the first loop
+        if is_welcome:
+            speech_act = 'hello'
+        else:
+            speech_act = model_user(user_response, model, tokenizer, speechactdict)
 
         # STORE SPEECH ACT AND SENTENCE (joni: this works)
         user_sentence = {}
