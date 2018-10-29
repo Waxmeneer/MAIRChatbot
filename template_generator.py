@@ -24,31 +24,35 @@ def template_request(restaurant, sentence):
                          "food": ["type"],
                          "area": ["area"]
     }
-    restaurant = restaurant.pop(0)
+    restaurant = restaurant[0]
+    info = ''
     for key, values in possible_requests.items():
         for value in values:
             if value in sentence:
                 info = key
 
     if info == "phone":
-        return "the phone number is" + str(restaurant[4])
+        return "The phone number of {} is {} ".format(str(restaurant[0]), str(restaurant[4]))
     elif info == "addr":
-        return "the address is " + str(restaurant[5])
+        return "The address of {} is {} ".format(str(restaurant[0]), str(restaurant[5]))
     elif info == "postcode":
-        return "the postcode is" + str(restaurant[6])
+        return "The postcode of {} is {} ".format(str(restaurant[0]), str(restaurant[6]))
     elif info == "price":
-        return "the price is" + str(restaurant[1])
+        return "The price range of {} is {} ".format(str(restaurant[0]), str(restaurant[1]))
     elif info == "area":
-        return "the area is" + str(restaurant[2])
+        return "The area of {} is {} ".format(str(restaurant[0]), str(restaurant[2]))
     elif info == "food":
-        return "the type of food is" + str(restaurant[3])
+        return "The food type of {} is {} ".format(str(restaurant[0]), str(restaurant[3]))
+    else:
+        return "Sorry, what information would you like to know about {}? Phone number, address, postcode, price range, area or type of food?".format(str(restaurant[2]))
 
 def restaurant_finder(filled_slots, restaurant_info):
     possible_restaurants = []
     values_filled_slots = []
 
     #make list of slot values which are not None
-    for key, value in filled_slots.items():
+    for key, value_list in filled_slots.items():
+            value = value_list[0][0]
             values_filled_slots.append(str(value))
 
     #make list of restaurant values and compare
