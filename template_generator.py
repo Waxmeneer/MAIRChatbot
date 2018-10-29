@@ -24,9 +24,11 @@ def template_request(restaurant, sentence):
                          "food": ["type"],
                          "area": ["area"]
     }
-    for key, value in possible_requests:
-        if value in sentence:
-            info = key
+    restaurant = restaurant.pop(0)
+    for key, values in possible_requests.items():
+        for value in values:
+            if value in sentence:
+                info = key
 
     if info == "phone":
         return "the phone number is" + str(restaurant[4])
