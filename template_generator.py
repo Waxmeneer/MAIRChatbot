@@ -44,7 +44,7 @@ def template_request(restaurant, sentence):
     elif info == "food":
         return "The food type of {} is {} ".format(str(restaurant[0]), str(restaurant[3]))
     else:
-        return "Sorry, what information would you like to know about {}? Phone number, address, postcode, price range, area or type of food?".format(str(restaurant[2]))
+        return "Sorry, what information would you like to know about {}? Phone number, address, postcode, price range, area or type of food?".format(str(restaurant[0]))
 
 def restaurant_finder(filled_slots, restaurant_info):
     possible_restaurants = []
