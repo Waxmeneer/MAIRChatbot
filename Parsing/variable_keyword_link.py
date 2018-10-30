@@ -23,17 +23,16 @@ def make_slot_list(parsed_sent, sent):
     slot_dict_no_links = dict()
     node_list = []
     slot_list = []
-    order=1 #So the system can trace back which order the words were typed.
+    order=1
     for word in sent:
         for key, value in informable_dict.items():
             if word in value:
                 if key in slot_dict:
                     slot_dict[key].append(word)
-                    slot_dict_no_links[key].append([word, order])
-                    order+=1
+                    slot_dict_no_links[key].append(word)
                 else:
                     slot_dict[key]=[word]
-                    slot_dict_no_links[key]=[[word, order]]
+                    slot_dict_no_links[key]=[order, word]
                     order+=1
             if word in variable_keyword_link[key]:
                 if key in slot_dict: #Only puts the linked word in if there is already a variable word.
@@ -110,11 +109,8 @@ def joint_remover(slot_list, slot_dict, parsed_sent):
     return [slot_list, slot_dict]
 
 def get_keywords(category):
-    catlist = []
-    for elem in category:
-        keyw = elem[0]
-        catlist.append(keyw)
-    return catlist
+    keywlist = category[1:]
+    return keywlist
 #Finds the subtree belonging to a top node.
 def subtree_finder(topnode, parsed_sent, nodelist, index):
     nodelist.append([topnode, index])
@@ -144,9 +140,10 @@ def slot_dict(inp):
     for parse in smallestparses:
         parsed_sentence = parse[3]
         parsed_sentence = label_nodes(parsed_sentence)
-        slot_list, slot_dict = make_slot_list(parsed_sentence, inp)[0], make_slot_list(parsed_sentence, inp)[1]
+        slot_info = make_slot_list(parsed_sentence, inp)
+        slot_list, slot_dict = slot_info[0], slot_info[1]
         disjoint_dict = joint_remover(slot_list, slot_dict, parsed_sentence)
-        if len(disjoint_dict[1])>0:
+        if len(disjoint_dict[1].keys())>0: #This is the dictionary
             return disjoint_dict[1]
     return {}
 

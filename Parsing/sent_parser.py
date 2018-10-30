@@ -10,8 +10,7 @@ parsedsentences = [] #All sentences that are not able to be parsed any further.
 #Labels all the words in a sentence with their possible types. Returns a list containing lists of all possible types per word.
 def labelwordtypes(sentence):
     words = convsent(sentence) #Makes it lowercase, without interpunction and mapped to the closest spelling.
-    if __name__ == "__main__":
-        print('Recognized input sentence: ' + ' '.join(words))
+    print('Recognized input sentence: ' + ' '.join(words))
     typelist = []
     for word in words:
         types = []
@@ -181,10 +180,6 @@ def wordparsesteps(sentence):
     parsedsentences.clear()
     smallestparses = parsesentence(sentence)
     return smallestparses
-
-
-def construct_alternate_parses(smallesparses):
-    pass
 
 #When the file is executed as main file, the user can put in a sentence.
 #This sentence is parsed, showing all steps towards the final type.
