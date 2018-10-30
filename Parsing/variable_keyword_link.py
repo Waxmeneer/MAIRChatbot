@@ -1,5 +1,4 @@
 import json
-import word_categories
 from sent_parser import wordparsesteps
 import os
 from sent_converter import convertsentence

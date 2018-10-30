@@ -20,8 +20,6 @@ def csv_reader():
         restaurant_info.pop(0)
     return restaurant_info
 
-
-
 def dialogue_ender():
     # clear all global variables
     global suggested_restaurants, filled_slots, asked_slots
@@ -30,9 +28,13 @@ def dialogue_ender():
     suggested_restaurants.clear()
     asked_slots.clear()
 
-
 def manager():
     global dialogue, suggested_restaurants, filled_slots
+    global empty_slots
+    global blacklist
+    blacklist = ["any", "dont care"]
+    empty_slots = ["food", "area", "pricerange"]
+
     user_response = ''
     model, tokenizer, speechactdict = load_model(), load_tokenizer(), load_speechactdict()
     restaurant_info = csv_reader()
@@ -48,6 +50,17 @@ def manager():
         orderinfo = update_order(order, slots)
         order, slots = orderinfo[0], orderinfo[1]
         filled_slots = slot_change(filled_slots, slots, speech_act, dialogue)
+
+        # Updates the list of empty slots
+        filled_keys = filled_slots.keys()
+        for keys in filled_keys:
+            if keys in empty_slots:
+                empty_slots.remove(keys)
+        # The blacklisted word list contains all 'dontcare' type responses (e.g: any, dont care etc)
+        for blacklisted_word in blacklist:
+            if blacklisted_word in inp:
+                any_filler(filled_slots)
+
         dialogue.append([speech_act, inp])
 
         # if user wants us to repeat last sentence do that otherwise, find template
@@ -90,6 +103,10 @@ def update_order(order, slot_dict):
     order += count
     return [order, slot_dict]
 
+#this functions fills any unfilled slots with the "any" dontcare value
+def any_filler(filled_slots):
+    for slot in empty_slots:
+        filled_slots[slot] = [["any", 999]]
 
 if __name__ == "__main__":
     manager()

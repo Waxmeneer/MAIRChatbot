@@ -1,4 +1,4 @@
-
+import random
 from LSTM import model_trainer, model_user
 
 
@@ -40,6 +40,21 @@ def template_request(restaurant, sentence):
 
 
 def restaurant_finder(filled_slots, restaurant_info, suggested_restaurants):
+
+    # this function removes all 'dont care' slots out of the list, then searches for all possible remaining restaurants and picks one at random, should probably make this into it's own function sometime in the future
+    values_filled_slots_pruned = []
+    possible_restaurants_pruned = []
+    filled_slots_pruned = {key: value for (key, value) in filled_slots.items() if value[0] != "any"}
+    if filled_slots_pruned != filled_slots:
+        for key, value_list in filled_slots_pruned.items():
+            value = value_list[0][0]
+            values_filled_slots_pruned.append(str(value))
+        for restaurant in restaurant_info:
+            info_elements = restaurant[1:4]
+            if set(values_filled_slots_pruned).issubset(info_elements):
+                possible_restaurants_pruned.append(restaurant)
+        return random_restaurant_picker(possible_restaurants_pruned)
+
     possible_restaurants = []
     values_filled_slots = []
 
@@ -193,6 +208,11 @@ def template_generator(filled_slots, slot_dict, suggested_restaurants, restauran
             or speech_act == "reqalts":
         # if no restaurant exists with a complete slots: give back to user and ask other preferences
         return(template_inform(filled_slots, slot_dict, poss_rests, suggested_restaurants, restaurant_info))
+
+#this function picks a random restaurant out of a list of possible restaurants
+def random_restaurant_picker(list_of_restaurants):
+    random_restaurant = random.choice(list_of_restaurants)
+    return [random_restaurant]
 
 if __name__ == "__main__":
     # need to be filled in volgorde van de user als er geen slot is niks meegeven
