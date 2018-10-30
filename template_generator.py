@@ -40,7 +40,7 @@ def template_request(restaurant, sentence):
     elif info == "price":
         return "The price range of {} is {} ".format(str(restaurant[0]), str(restaurant[1]))
     elif info == "area":
-        return "The area of {} is {} ".format(str(restaurant[0]), str(restaurant[2]))
+        return "The {} is in the {} part of town ".format(str(restaurant[0]), str(restaurant[2]))
     elif info == "food":
         return "The food type of {} is {} ".format(str(restaurant[0]), str(restaurant[3]))
     else:
@@ -53,8 +53,10 @@ def restaurant_finder(filled_slots, restaurant_info):
     #make list of slot values which are not None
     for key, value_list in filled_slots.items():
             value = value_list[0][0]
+            if value == 'random':
+                values_filled_slots.append(key)
             values_filled_slots.append(str(value))
-
+    print(values_filled_slots, "these are the value filled slots")
     #make list of restaurant values and compare
     for restaurant in restaurant_info:
         info_elements = restaurant[1:4]
@@ -73,23 +75,26 @@ def template_hello():
 
 def template_inform_multiple_results(filled_slots, current_suggested_restaurant):
     response = 'There are {} restaurants found. '.format(len(current_suggested_restaurant))
-
+    asked_slots = []
     try:
         filled_slots['pricerange']
     except KeyError:
         response += 'What is your price range? '
+        asked_slots.append('pricerange')
 
     try:
         filled_slots['area']
     except KeyError:
-        response += 'Where is your preference area? '
+        response += 'What is your area of preference? '
+        asked_slots.append('area')
 
     try:
         filled_slots['food']
     except KeyError:
-        response += 'What type of food do you like? '
+        response += 'What type of food would you like? '
+        asked_slots.append('food')
 
-    return response
+    return [response, asked_slots]
 
 def template_import_the_one(current_suggested_restaurant):
     current_suggested_restaurant = current_suggested_restaurant[0]
@@ -99,7 +104,7 @@ def template_import_the_one(current_suggested_restaurant):
     food = str(current_suggested_restaurant[3])
 
     if area != '':
-        return '{} is a {} {} restaurant in the are of {}'.format(name, pricerange, food, area)
+        return '{} is a {} {} restaurant in the {} area of town '.format(name, pricerange, food, area)
     else:
         return '{} is a {} {} restaurant'.format(name, pricerange, food)
 
@@ -149,6 +154,7 @@ def template_generator(filled_slots, speech_act, current_suggested_restaurant, c
     #ack use a lot words like "um" or "okay", another way of confirming or sometimes adding more info like "hmm how about korean?"
     #null super random, but when we return what we have in inform, it sounds still related
     #reqalts is very similar like inform
+
     elif speech_act == "inform" \
             or speech_act == "reqmore" \
             or speech_act == "negate" \
