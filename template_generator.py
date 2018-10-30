@@ -53,8 +53,6 @@ def restaurant_finder(filled_slots, restaurant_info):
     #make list of slot values which are not None
     for key, value_list in filled_slots.items():
             value = value_list[0][0]
-            if value == 'random':
-                values_filled_slots.append(key)
             values_filled_slots.append(str(value))
     print(values_filled_slots, "these are the value filled slots")
     #make list of restaurant values and compare
