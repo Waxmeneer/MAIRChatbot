@@ -46,19 +46,21 @@ def template_request(restaurant, sentence):
     else:
         return "Sorry, what information would you like to know about {}? Phone number, address, postcode, price range, area or type of food?".format(str(restaurant[0]))
 
-def restaurant_finder(filled_slots, restaurant_info):
+def restaurant_finder(filled_slots, restaurant_info, suggested_restaurants):
     possible_restaurants = []
     values_filled_slots = []
 
     #make list of slot values which are not None
     for key, value_list in filled_slots.items():
             value = value_list[0][0]
+            if value == 'random':
+                values_filled_slots.append(key)
             values_filled_slots.append(str(value))
     print(values_filled_slots, "these are the value filled slots")
     #make list of restaurant values and compare
     for restaurant in restaurant_info:
         info_elements = restaurant[1:4]
-        if set(values_filled_slots).issubset(info_elements):
+        if set(values_filled_slots).issubset(info_elements) and restaurant not in suggested_restaurants:
             possible_restaurants.append(restaurant)
     return possible_restaurants
 
@@ -110,18 +112,19 @@ def template_no_restaurant_found():
     return "We cannot find any restaurant. What other kind of restaurant you like?"
 
 #gets if final restaurant or not (enkelvoud of meervoud zin teruggeven)
-def template_generator(filled_slots, speech_act, current_suggested_restaurant, current_user_sentence):
-
+def template_generator(filled_slots, slot_dict, suggested_restaurants, dialogue):
+    poss_rests = restaurant_finder(filled_slots, restaurant_info, suggested_restaurants)
+	speech_act = dialogue[len(dialogue)-1][0]
+	current_user_sentence = dialogue[len(dialogue)-1][1] #At the end of the dialogue list
+    current_suggested_restaurant = suggested_restaurants[len(suggested_restaurants)-1]
+    
     if speech_act == "hello":
         return template_hello()
 
     # if no preference / slots yet but the speech act is not inform, force them to give preference
-    elif (not filled_slots) and (speech_act != 'inform'):
+    elif (not filled_slots) and (speech_act != 'inform') or speech_act=='restart':
         return template_restart()
-
-    elif speech_act == 'restart':
-        return template_restart()
-
+    
 #joni:not restart, but search for another restaurant I guess while holding on to filled slots...
     elif speech_act == 'deny':
         return template_restart()
