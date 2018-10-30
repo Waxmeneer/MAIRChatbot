@@ -114,8 +114,8 @@ def template_no_restaurant_found():
 #gets if final restaurant or not (enkelvoud of meervoud zin teruggeven)
 def template_generator(filled_slots, slot_dict, suggested_restaurants, dialogue):
     poss_rests = restaurant_finder(filled_slots, restaurant_info, suggested_restaurants)
-	speech_act = dialogue[len(dialogue)-1][0]
-	current_user_sentence = dialogue[len(dialogue)-1][1] #At the end of the dialogue list
+    speech_act = dialogue[len(dialogue)-1][0]
+    current_user_sentence = dialogue[len(dialogue)-1][1] #At the end of the dialogue list
     current_suggested_restaurant = suggested_restaurants[len(suggested_restaurants)-1]
     
     if speech_act == "hello":
