@@ -49,14 +49,13 @@ def manager():
         user_sentence['sentence'] = user_response
         user_sentence['speech_act'] = speech_act
         user_sentences.append(user_sentence)
-        
-        #TODO working on adding random to slot values if user doesn't have preference
+
+
         # get filled slots, only if the speech act is inform
         if speech_act == "inform" and filled_slots == filled_slots.update(slot_dict(user_response)):
-            if asked_slots is not None:
-                for asked_slot in asked_slots:
-                    filled_slots.update({asked_slot: [['random']]})
-                    print(filled_slots, "random added to filled slots")
+            #see if slot is filled by info of user if not and speech act is still inform > probably one key is random
+            return
+
 
         if speech_act == "inform" \
                 or speech_act == "reqmore" \
@@ -77,7 +76,8 @@ def manager():
         # if user wants us to repeat last sentence do that otherwise, find template
         if speech_act == 'repeat':
             template_result = system_sentences[-1]
-
+            
+        #Get asked slots of previous system utterance 
         elif speech_act == 'inform' and len(current_suggested_restaurant) > 1:
             result = template_generator(filled_slots, speech_act, current_suggested_restaurant, user_response)
             template_result = result[0]
