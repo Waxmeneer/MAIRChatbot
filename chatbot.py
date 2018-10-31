@@ -68,7 +68,13 @@ def manager():
 
         template_result = template_generator(filled_slots, slots, suggested_restaurants, restaurant_info, dialogue)
         print('template result', template_result)
-        if (speech_act == 'inform'):
+        if speech_act == "inform" \
+             or speech_act == "reqmore" \
+             or speech_act == "negate" \
+             or speech_act == "affirm" \
+             or speech_act == "ack" \
+             or speech_act == "null" \
+             or speech_act == "reqalts":
             try: #Suggested restaurants only changes on inform.
                 template_str = template_result[0]
                 template_sug = template_result[1]
