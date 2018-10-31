@@ -151,6 +151,40 @@ def slots_to_string(filled_slots):
 def template_no_restaurant_found():
     return "We cannot find any restaurant. What other kind of restaurant you like?"
 
+def template_confirm(slot_dict, current_suggested_restaurant):
+    restaurant = current_suggested_restaurant[0]
+
+    confirm_response = ''
+    for key, value in slot_dict.items():
+
+        if key == "pricerange":
+            data_number = 1
+            text_slot = "price range"
+        elif key == "area":
+            data_number = 2
+            text_slot = "area"
+        elif key == "food":
+            data_number = 3
+            text_slot = "food type"
+        else:
+            data_number = 0
+
+        if data_number != 0:
+            if value[1] == str(restaurant[data_number]):
+                confirm_response += "Yes"
+            else:
+                confirm_response += "No"
+
+            confirm_response += ", the {} of {} is {}".format(text_slot, str(restaurant[0]), str(restaurant[data_number]))
+
+            if value[1] != str(restaurant[data_number]):
+                confirm_response += ", not {}".format(value[1])
+
+    if confirm_response == '':
+        confirm_response = 'Sorry, what do you want to confirm? the area, the price range or food type'
+
+    return confirm_response
+
 
 # gets if final restaurant or not (enkelvoud of meervoud zin teruggeven)
 def template_generator(filled_slots, slot_dict, suggested_restaurants, restaurant_info, dialogue):
@@ -177,6 +211,9 @@ def template_generator(filled_slots, slot_dict, suggested_restaurants, restauran
     elif speech_act == "thankyou":
         return template_bye()
 
+    elif speech_act == "confirm":
+        return template_confirm(slot_dict, current_suggested_restaurant)
+
     elif speech_act == "request":
 
         if len(current_suggested_restaurant) == 0:
@@ -201,7 +238,6 @@ def template_generator(filled_slots, slot_dict, suggested_restaurants, restauran
     elif speech_act == "inform" \
             or speech_act == "reqmore" \
             or speech_act == "negate" \
-            or speech_act == "confirm" \
             or speech_act == "affirm" \
             or speech_act == "ack" \
             or speech_act == "null" \

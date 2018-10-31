@@ -67,7 +67,6 @@ def manager():
          #   template_result = system_sentences[-1]
 
         template_result = template_generator(filled_slots, slots, suggested_restaurants, restaurant_info, dialogue)
-        print('template result', template_result)
         if speech_act == "inform" \
              or speech_act == "reqmore" \
              or speech_act == "negate" \
