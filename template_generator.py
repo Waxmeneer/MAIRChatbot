@@ -44,16 +44,16 @@ def restaurant_finder(filled_slots, restaurant_info, suggested_restaurants):
     # this function removes all 'dont care' slots out of the list, then searches for all possible remaining restaurants and picks one at random, should probably make this into it's own function sometime in the future
     values_filled_slots_pruned = []
     possible_restaurants_pruned = []
-    filled_slots_pruned = {key: value for (key, value) in filled_slots.items() if value[0] != "any"}
+    filled_slots_pruned = {key: value for (key, value) in filled_slots.items() if value[1] != "any"}
     if filled_slots_pruned != filled_slots:
         for key, value_list in filled_slots_pruned.items():
-            value = value_list[0][0]
-            values_filled_slots_pruned.append(str(value))
+            value = value_list[1]
+            values_filled_slots_pruned.append(value)
         for restaurant in restaurant_info:
             info_elements = restaurant[1:4]
-            if set(values_filled_slots_pruned).issubset(info_elements):
+            if set(values_filled_slots_pruned).issubset(info_elements) and restaurant not in suggested_restaurants:
                 possible_restaurants_pruned.append(restaurant)
-        return random_restaurant_picker(possible_restaurants_pruned)
+        return possible_restaurants_pruned
 
     possible_restaurants = []
     values_filled_slots = []
@@ -247,5 +247,8 @@ def template_generator(filled_slots, slot_dict, suggested_restaurants, restauran
 
 #this function picks a random restaurant out of a list of possible restaurants
 def random_restaurant_picker(list_of_restaurants):
-    random_restaurant = random.choice(list_of_restaurants)
+    try: #If the list of restaurants is empty, it can't perform random.choice.
+        random_restaurant = random.choice(list_of_restaurants)
+    except:
+        random_restaurant = []
     return [random_restaurant]

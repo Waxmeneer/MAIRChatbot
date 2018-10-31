@@ -49,7 +49,6 @@ def manager():
         orderinfo = update_order(order, slots)
         order, slots = orderinfo[0], orderinfo[1]
         filled_slots = slot_change(filled_slots, slots, speech_act, dialogue)
-
         # Updates the list of empty slots
         filled_keys = filled_slots.keys()
         for keys in filled_keys:
@@ -61,7 +60,7 @@ def manager():
                 any_filler(filled_slots)
 
         dialogue.append([speech_act, inp])
-
+        print(filled_slots)
         # if user wants us to repeat last sentence do that otherwise, find template
         #if speech_act == 'repeat':
          #   template_result = system_sentences[-1]
@@ -114,7 +113,7 @@ def update_order(order, slot_dict):
 #this functions fills any unfilled slots with the "any" dontcare value
 def any_filler(filled_slots):
     for slot in empty_slots:
-        filled_slots[slot] = [["any", 999]]
+        filled_slots[slot] = [999,"any"]
 
 if __name__ == "__main__":
     manager()
