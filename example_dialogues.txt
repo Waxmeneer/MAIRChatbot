@@ -1,0 +1,86 @@
+#Example 1
+System: Welcome to the team14 restaurant system. You can tell your preference of area , price range or food type. How can we help?
+user: chinese food
+
+System: There are 9 restaurants found serving chinese food. What area would you like?
+user: north
+
+System: the hotpot is a nice restaurant serving chinese food in the north part of town.
+user: thank you
+
+System: Thank you for using team14 system. eet smakelijk!
+
+#Example 2
+System: Welcome to the team14 restaurant system. You can tell your preference of area , price range or food type. How can we help?
+user: north area
+
+System: There are 16 restaurants found in the north part of town. What food would you like?
+user: any
+
+System: Sorry but there are no restaurants in the north part of town serving any food with a any priced menu.
+Could you please change the food, area or pricerange?
+user: moderate price
+
+System: Sorry but there are no restaurants in the north part of town serving any food with a moderate priced menu.
+Could you please change the food, area or pricerange?
+user: south part of town
+
+System: Sorry but there are no restaurants in the south part of town serving any food with a moderate priced menu.
+Could you please change the food, area or pricerange?
+user: italian
+
+System: pizza hut cherry hinton is a nice restaurant in the south part of town serving italian food with a moderate priced menu.
+
+
+#Example 3
+System: Welcome to the team14 restaurant system. You can tell your preference of area , price range or food type. How can we help?
+user: italian
+
+System: There are 8 restaurants found serving italian food. What area would you like?
+user: south
+
+System: There are 4 restaurants found serving italian food in the south part of town. What pricerange would you like?
+user: expensive
+
+System: frankie and bennys is a nice restaurant serving italian food in the south part of town with a expensive priced menu.
+user: address
+
+System: The address of frankie and bennys is cambridge leisure park clifton way cherry hinton
+user: postcode
+
+System: The postcode of frankie and bennys is c.b 1
+
+
+
+#Example 4
+System: Welcome to the team14 restaurant system. You can tell your preference of area , price range or food type. How can we help?
+user: moderate chinese
+
+System: shanghai family restaurant is a nice restaurant with a moderate priced menu serving chinese food.
+user: thank you
+
+System: Thank you for using team14 system. eet smakelijk!
+
+
+
+#Example 5
+Welcome to the team14 restaurant system. You can tell your preference of area , price range or food type. How can we help?
+user: food chinese
+
+System: There are 9 restaurants found serving chinese food. What area would you like?
+user: south
+
+System: There are 5 restaurants found serving chinese food in the south part of town. What pricerange would you like?
+user: expensive
+
+System: peking restaurant is a nice restaurant serving chinese food in the south part of town with a expensive priced menu.
+user: which part of town?
+
+System: Sorry, what information would you like to know about peking restaurant? Phone number, address, postcode, price range, area or type of food?
+user: postcode
+
+System: The postcode of peking restaurant is c.b 2
+user: thank you
+
+System: Thank you for using team14 system. eet smakelijk!
+
