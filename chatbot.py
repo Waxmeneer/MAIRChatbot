@@ -38,7 +38,6 @@ def manager():
     user_response = ''
     model, tokenizer, speechactdict = load_model(), load_tokenizer(), load_speechactdict()
     restaurant_info = csv_reader()
-    is_welcome = True
     order = 0
     # start dialogue
     print(template_hello())
@@ -68,11 +67,15 @@ def manager():
          #   template_result = system_sentences[-1]
 
         template_result = template_generator(filled_slots, slots, suggested_restaurants, restaurant_info, dialogue)
-        try: #Suggested restaurants only changes on inform.
-            template_str = template_result[0]
-            template_sug = template_result[1]
-            suggested_restaurants = template_sug
-        except:
+        print('template result', template_result)
+        if (speech_act == 'inform'):
+            try: #Suggested restaurants only changes on inform.
+                template_str = template_result[0]
+                template_sug = template_result[1]
+                suggested_restaurants = template_sug
+            except:
+                template_str = template_result
+        else:
             template_str = template_result
         # store system sentences
         dialogue.append([99, template_str])  # 99 is an arbitrary speech act.
