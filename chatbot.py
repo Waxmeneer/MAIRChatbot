@@ -8,7 +8,7 @@ from variable_keyword_link import slot_dict
 dialogue = []
 suggested_restaurants = []
 filled_slots = {}
-
+order = 0
 # makes a list with lists of possible restaurants
 # typical element in restaurant list is [name, pricerange, area, food, phone, addr, postcode]
 def csv_reader():
@@ -29,16 +29,13 @@ def dialogue_ender():
     asked_slots.clear()
 
 def manager():
-    global dialogue, suggested_restaurants, filled_slots
-    global empty_slots
-    global blacklist
+    global dialogue, suggested_restaurants, filled_slots, empty_slots, blacklist, order
     blacklist = ["any", "dont care"]
     empty_slots = ["food", "area", "pricerange"]
 
     user_response = ''
     model, tokenizer, speechactdict = load_model(), load_tokenizer(), load_speechactdict()
     restaurant_info = csv_reader()
-    order = 0
     # start dialogue
     print(template_hello())
     while True:
@@ -112,8 +109,10 @@ def update_order(order, slot_dict):
 
 #this functions fills any unfilled slots with the "any" dontcare value
 def any_filler(filled_slots):
+    global order
     for slot in empty_slots:
-        filled_slots[slot] = [999,"any"]
+        order+=1
+        filled_slots[slot] = [order,"any"]
 
 if __name__ == "__main__":
     manager()
