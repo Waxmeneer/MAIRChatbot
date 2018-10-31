@@ -23,17 +23,17 @@ def template_request(restaurant, sentence):
                 info = key
 
     if info == "phone":
-        return "The phone number of {} is {} ".format(str(restaurant[0]), str(restaurant[4]))
+        return "The phone number of {} is {} ".format(str(restaurant[0]), str(restaurant[4]) if str(restaurant[4]) else "unknown")
     elif info == "addr":
-        return "The address of {} is {} ".format(str(restaurant[0]), str(restaurant[5]))
+        return "The address of {} is {} ".format(str(restaurant[0]), str(restaurant[5]) if str(restaurant[5]) else "unknown")
     elif info == "postcode":
-        return "The postcode of {} is {} ".format(str(restaurant[0]), str(restaurant[6]))
+        return "The postcode of {} is {} ".format(str(restaurant[0]), str(restaurant[6]) if str(restaurant[6]) else "unknown")
     elif info == "price":
-        return "The price range of {} is {} ".format(str(restaurant[0]), str(restaurant[1]))
+        return "The price range of {} is {} ".format(str(restaurant[0]), str(restaurant[1]) if str(restaurant[1]) else "unknown")
     elif info == "area":
-        return "The {} is in the {} part of town ".format(str(restaurant[0]), str(restaurant[2]))
+        return "The {} is in the {} part of town ".format(str(restaurant[0]), str(restaurant[2]) if str(restaurant[2]) else "unknown")
     elif info == "food":
-        return "The food type of {} is {} ".format(str(restaurant[0]), str(restaurant[3]))
+        return "The food type of {} is {} ".format(str(restaurant[0]), str(restaurant[3]) if str(restaurant[3]) else "unknown")
     else:
         return "Sorry, what information would you like to know about {}? Phone number, address, postcode, price range, area or type of food?".format(
             str(restaurant[0]))
@@ -213,15 +213,3 @@ def template_generator(filled_slots, slot_dict, suggested_restaurants, restauran
 def random_restaurant_picker(list_of_restaurants):
     random_restaurant = random.choice(list_of_restaurants)
     return [random_restaurant]
-
-if __name__ == "__main__":
-    # need to be filled in volgorde van de user als er geen slot is niks meegeven
-    filled_slots = {
-        "pricerange": "expensive",
-        "area": "north",
-        "food": "french"
-    }
-    restaurant_info = csv_reader()
-    print(restaurant_finder(filled_slots, restaurant_info))
-    # analyze speech act for every sentence
-    # keep track of current restaurant
