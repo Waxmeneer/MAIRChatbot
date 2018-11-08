@@ -117,20 +117,20 @@ def inform_to_string(filled_slots, poss_rests, suggested_restaurants, restaurant
 
     if len(filled_slots.keys()) > 2 and len(poss_rests) > 0 or len(poss_rests)==1:
         suggested_restaurants.append(poss_rests[0])
-        template[0] = 'Restaurant: \"' + poss_rests[0][0] + '\" is a nice restaurant ' + slots_to_string(filled_slots)
-        template[1] = 'We have one restaurant for you: \"' + poss_rests[0][0] + '\" ' + slots_to_string(filled_slots)
+        template[0] = "This restaurant named {} is a nice restaurant {}".format(poss_rests[0][0], slots_to_string(filled_slots))
+        template[1] = "We have one restaurant for you called {} {}".format(poss_rests[0][0], slots_to_string(filled_slots))
     elif len(filled_slots.keys()) < 3 and len(poss_rests) > 0:
         missing_slot = get_missing_slot(filled_slots)
-        template[0] = 'There are ' + str(len(poss_rests)) + ' restaurants found ' + slots_to_string( filled_slots) + 'What ' + missing_slot + ' would you like?'
-        template[1] = 'We found ' + str(len(poss_rests)) + ' restaurants ' + slots_to_string( filled_slots) + 'Do you have ' + missing_slot + ' preference?'
+        template[0] = 'There are {} restaurants found {} What {} would you like?'.format(str(len(poss_rests)), slots_to_string( filled_slots), missing_slot)
+        template[1] = 'We found {} restaurants {} Do you have {} preference?'.format(str(len(poss_rests)), slots_to_string( filled_slots), missing_slot)
 
     else:  # When the amount of possible restaurants is 0
         if len(restaurant_finder(filled_slots, restaurant_info, []))>0: #If there are restaurants, but the user rejected all.
-            template[0] = 'Sorry but there are no other restaurants ' + slots_to_string(filled_slots) + '\n' + 'Could you please change the food, area or pricerange?'
-            template[1] = 'Unfortunately we could not find any other restaurants ' + slots_to_string(filled_slots) + '\n' + 'Perhaps different the food, area or pricerange?'
+            template[0] = 'Sorry but there are no other restaurants {} Could you please change the food, area or pricerange?'.format(slots_to_string(filled_slots))
+            template[1] = 'Unfortunately we could not find any other restaurants {} Perhaps different the food, area or pricerange?'.format(slots_to_string(filled_slots))
         else:
-            template[0] = 'Sorry but there are no restaurants ' + slots_to_string(filled_slots) + '\n' + 'Could you please change the food, area or pricerange?'
-            template[1] = 'Unfortunately we could not find anu restaurants ' + slots_to_string(filled_slots) + '\n' + 'Perhaps different the food, area or pricerange?'
+            template[0] = 'Sorry but there are no restaurants {} Could you please change the food, area or pricerange?'.format(slots_to_string(filled_slots))
+            template[1] = 'Unfortunately we could not find anu restaurants {} Perhaps different the food, area or pricerange?'.format(slots_to_string(filled_slots))
 
     return [return_random(template), suggested_restaurants]
 
