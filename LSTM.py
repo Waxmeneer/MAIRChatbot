@@ -13,9 +13,6 @@ import sys
 # The count increases as a new type of act is added, ensuring that each new type of act gets a unique integer.
 speechactdict = {}
 count=1
-model = None
-tokenizer = None
-
 # Splits a single line into speech acts and utterances, where speech acts are the first word on the line.
 def splitline(line, istrainset):
 	actnr = ''
@@ -64,6 +61,7 @@ def model_trainer():
 	#Here we create a tokenizer, which is an easy way to label a unique integer per word.
 	tokenizer = Tokenizer(oov_token=999)
 	tokenizer.fit_on_texts(trainutterances)  # train tokenizer on speech utterances
+	print(tokenizer.word_counts)
 	vocab_size = len(tokenizer.word_index)  # store vocabulary size for model input
 	sequences_train = tokenizer.texts_to_sequences(trainutterances)  # convert words to vocabulary integers matrix
 	sequences_test = tokenizer.texts_to_sequences(testutterances)
@@ -84,7 +82,7 @@ def model_trainer():
 	#set contains a certain class which the test set does not.
 	trainacts_binary = to_categorical(trainacts, len(speechactdict.keys())+1)
 	testacts_binary = to_categorical(testacts, len(speechactdict.keys())+1)
-	model.fit(padded_text_train, trainacts_binary, epochs=10)
+	model.fit(padded_text_train, trainacts_binary, epochs=30)
 
 	#We then test model on the test data and print the score, which consists of the loss and accuracy. 	
 	score = model.evaluate(padded_text_test, testacts_binary)
@@ -120,11 +118,11 @@ def load_speechactdict():
 
 def model_user(sentence, model, tokenizer, speechactdict):
 	#The program keeps looping, in which the user can let an input sentence be classified.
-        sentence = [sentence]
-        sentence = tokenizer.texts_to_sequences(sentence)
-        sentence = pad_sequences(sentence, padding='post', maxlen=10, truncating='post')
-        cl = model.predict_classes(sentence)
-        return list(speechactdict)[cl[0]-1]
+	sentence = [sentence]
+	sentence = tokenizer.texts_to_sequences(sentence)
+	sentence = pad_sequences(sentence, padding='post', maxlen=10, truncating='post')
+	cl = model.predict_classes(sentence)
+	return list(speechactdict)[cl[0]-1]
 
 def create_json_model(model):
         jsonmodel = model.to_json()
