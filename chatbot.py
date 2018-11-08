@@ -66,7 +66,6 @@ def manager():
                         any_filler(filled_slots, suggested_slot)
                     else:
                         speech_act = speech_act.replace(speech_act, key) #It overrules the speech_act in utterances as 'restart'.
-        print(speech_act)
         dialogue.append([speech_act, inp])
         template_result = template_generator(filled_slots, slots, suggested_restaurants, suggested_slot, restaurant_info, dialogue)
         if speech_act in informacts: #The list of acts similar to inform is present in the template_generator file.
