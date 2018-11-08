@@ -31,6 +31,7 @@ type_dictionary = {
         "parts",
         "park",
         "place",
+        'possibilities',
         "postcode",
         "prices",
         "range",
@@ -82,6 +83,7 @@ type_dictionary = {
         "parts",
         "park",
         "place",
+        'possibilities',
         "postcode",
         "prices",
         "range",
@@ -570,6 +572,6 @@ type_dictionary = {
         "id",
         "bye",
         "goodbye",
-        ""
+        "options"
     ]
 }
