@@ -6,39 +6,6 @@ from LSTM import model_trainer, model_user
 # Make templates and keep track of order in which user states preferences
 # aggregation?
 
-
-def template_request(restaurant, sentence):
-    possible_requests = {"phone": ["phone"],
-                         "postcode": ["postcode", "post code"],
-                         "addr": ["addr", "address"],
-                         "price": ["price"],
-                         "food": ["type"],
-                         "area": ["area"]
-                         }
-    restaurant = restaurant[0]
-    info = ''
-    for key, values in possible_requests.items():
-        for value in values:
-            if value in sentence:
-                info = key
-
-    if info == "phone":
-        return "The phone number of {} is {} ".format(str(restaurant[0]), str(restaurant[4]) if str(restaurant[4]) else "unknown")
-    elif info == "addr":
-        return "The address of {} is {} ".format(str(restaurant[0]), str(restaurant[5]) if str(restaurant[5]) else "unknown")
-    elif info == "postcode":
-        return "The postcode of {} is {} ".format(str(restaurant[0]), str(restaurant[6]) if str(restaurant[6]) else "unknown")
-    elif info == "price":
-        return "The price range of {} is {} ".format(str(restaurant[0]), str(restaurant[1]) if str(restaurant[1]) else "unknown")
-    elif info == "area":
-        return "The {} is in the {} part of town ".format(str(restaurant[0]), str(restaurant[2]) if str(restaurant[2]) else "unknown")
-    elif info == "food":
-        return "The food type of {} is {} ".format(str(restaurant[0]), str(restaurant[3]) if str(restaurant[3]) else "unknown")
-    else:
-        return "Sorry, what information would you like to know about {}? Phone number, address, postcode, price range, area or type of food?".format(
-            str(restaurant[0]))
-
-
 def restaurant_finder(filled_slots, restaurant_info, suggested_restaurants):
 
     # this function removes all 'dont care' slots out of the list, then searches for all possible remaining restaurants and picks one at random, should probably make this into it's own function sometime in the future
@@ -74,17 +41,67 @@ def restaurant_finder(filled_slots, restaurant_info, suggested_restaurants):
                 possible_restaurants.append(restaurant)
     return possible_restaurants
 
+# choose one random template from all given possible templates
+def return_random(template):
+    max = len(template) - 1
+    return template[random.randint(0, max)]
+
+def template_request(restaurant, sentence):
+    possible_requests = {"phone": ["phone"],
+                         "postcode": ["postcode", "post code"],
+                         "addr": ["addr", "address"],
+                         "price": ["price"],
+                         "food": ["type"],
+                         "area": ["area"]
+                         }
+    restaurant = restaurant[0]
+    template = {}
+    for key, values in possible_requests.items():
+        for value in values:
+            if value in sentence:
+                info = key
+
+    if info == "phone":
+        template[0] = "The phone number of {} is {} ".format(str(restaurant[0]), str(restaurant[4]) if str(restaurant[4]) else "unknown")
+        template[1] = "The number is {} ".format(str(restaurant[4]) if str(restaurant[4]) else "unknown")
+    elif info == "addr":
+        template[0] = "The address of {} is {} ".format(str(restaurant[0]), str(restaurant[5]) if str(restaurant[5]) else "unknown")
+        template[1] = "The address is {} ".format(str(restaurant[5]) if str(restaurant[5]) else "unknown")
+    elif info == "postcode":
+        template[0] = "The postcode of {} is {} ".format(str(restaurant[0]), str(restaurant[6]) if str(restaurant[6]) else "unknown")
+        template[1] = "The postcode is {} ".format(str(restaurant[6]) if str(restaurant[6]) else "unknown")
+    elif info == "price":
+        template[0] = "The price range of {} is {} ".format(str(restaurant[0]), str(restaurant[1]) if str(restaurant[1]) else "unknown")
+        template[1] = "The price range is {} ".format(str(restaurant[1]) if str(restaurant[1]) else "unknown")
+    elif info == "area":
+        template[0] = "The {} is in the {} part of town ".format(str(restaurant[0]), str(restaurant[2]) if str(restaurant[2]) else "unknown")
+        template[1] = "The location is in the {} part of town ".format(str(restaurant[2]) if str(restaurant[2]) else "unknown")
+    elif info == "food":
+        template[0] = "The food type of {} is {} ".format(str(restaurant[0]), str(restaurant[3]) if str(restaurant[3]) else "unknown")
+        template[1] = "The food type is {} ".format(str(restaurant[3]) if str(restaurant[3]) else "unknown")
+    else:
+        template[0] = "Sorry, what information would you like to know about {}? Phone number, address, postcode, price range, area or type of food?".format(str(restaurant[0]))
+        template[1] = "Would you like some information about {}? You can ask the following information: Phone number, address, postcode, price range, area or type of food?".format(str(restaurant[0]))
+
+    return return_random(template)
 
 def template_restart():
-    return "What kind of restaurant would you like?"
-
+    template = {}
+    template[0] = "Alright, What are your preferences?"
+    template[1] = "What kind of restaurant would you like?"
+    return return_random(template)
 
 def template_bye():
-    return "Thank you for using team14 system. eet smakelijk!"
-
+    template = {}
+    template[0] = "Thank you for using team14 system. eet smakelijk!"
+    template[1] = "Bye, enjoy your meal!"
+    return return_random(template)
 
 def template_hello():
-    return "Welcome to the team14 restaurant system. You can tell your preference of area , price range or food type. How can we help?"
+    template = {}
+    template[0] = "Welcome to the team14 restaurant system. You can tell your preference of area , price range or food type. How can we help?"
+    template[1] = "Hi, Welcome to the team14 restaurant system. We can help you to find a restaurant based on the area, type of food or price range you like"
+    return return_random(template)
 
 def template_inform(filled_slots, slot_dict, poss_rests, suggested_restaurants, restaurant_info):
     for key, val in slot_dict.items():
@@ -93,25 +110,29 @@ def template_inform(filled_slots, slot_dict, poss_rests, suggested_restaurants, 
     return [informinfo[0],
             informinfo[1]]  # Need to also return suggested_restaurants, as a new restaurant may have been suggested.
 
-
 # Puts all inform speech act info into a response string, combined with the updated already suggested restaurants.
 def inform_to_string(filled_slots, poss_rests, suggested_restaurants, restaurant_info):
+
+    template = {}
+
     if len(filled_slots.keys()) > 2 and len(poss_rests) > 0 or len(poss_rests)==1:
         suggested_restaurants.append(poss_rests[0])
-        return ['Restaurant: \"' + poss_rests[0][0] + '\" is a nice restaurant ' + slots_to_string(filled_slots),
-            suggested_restaurants]
+        template[0] = 'Restaurant: \"' + poss_rests[0][0] + '\" is a nice restaurant ' + slots_to_string(filled_slots)
+        template[1] = 'We have one restaurant for you: \"' + poss_rests[0][0] + '\" ' + slots_to_string(filled_slots)
     elif len(filled_slots.keys()) < 3 and len(poss_rests) > 0:
         missing_slot = get_missing_slot(filled_slots)
-        return ['There are ' + str(len(poss_rests)) + ' restaurants found ' + slots_to_string(
-            filled_slots) + 'What ' + missing_slot + ' would you like?', suggested_restaurants]
+        template[0] = 'There are ' + str(len(poss_rests)) + ' restaurants found ' + slots_to_string( filled_slots) + 'What ' + missing_slot + ' would you like?'
+        template[1] = 'We found ' + str(len(poss_rests)) + ' restaurants ' + slots_to_string( filled_slots) + 'Do you have ' + missing_slot + ' preference?'
 
     else:  # When the amount of possible restaurants is 0
         if len(restaurant_finder(filled_slots, restaurant_info, []))>0: #If there are restaurants, but the user rejected all.
-            return ['Sorry but there are no other restaurants ' + slots_to_string(filled_slots) + '\n' +
-                    'Could you please change the food, area or pricerange?', suggested_restaurants]
+            template[0] = 'Sorry but there are no other restaurants ' + slots_to_string(filled_slots) + '\n' + 'Could you please change the food, area or pricerange?'
+            template[1] = 'Unfortunately we could not find any other restaurants ' + slots_to_string(filled_slots) + '\n' + 'Perhaps different the food, area or pricerange?'
         else:
-            return ['Sorry but there are no restaurants ' + slots_to_string(filled_slots) + '\n' +
-                    'Could you please change the food, area or pricerange?', suggested_restaurants]
+            template[0] = 'Sorry but there are no restaurants ' + slots_to_string(filled_slots) + '\n' + 'Could you please change the food, area or pricerange?'
+            template[1] = 'Unfortunately we could not find anu restaurants ' + slots_to_string(filled_slots) + '\n' + 'Perhaps different the food, area or pricerange?'
+
+    return [return_random(template), suggested_restaurants]
 
 
 # Gets a slot that is not yet filled.
@@ -149,12 +170,16 @@ def slots_to_string(filled_slots):
 
 
 def template_no_restaurant_found():
-    return "We cannot find any restaurant. What other kind of restaurant you like?"
+    template = {}
+    template[0] = "No restaurant is found in our system. Perhaps different preferences?"
+    template[1] = "We cannot find any restaurant. What other kind of restaurant you like?"
+    return return_random(template)
+
 
 def template_confirm(slot_dict, current_suggested_restaurant):
     restaurant = current_suggested_restaurant[0]
 
-    confirm_response = ''
+    template = {}
     for key, value in slot_dict.items():
 
         if key == "pricerange":
@@ -171,19 +196,24 @@ def template_confirm(slot_dict, current_suggested_restaurant):
 
         if data_number != 0:
             if value[1] == str(restaurant[data_number]):
-                confirm_response += "Yes"
+                template[0] += "Yes"
+                template[1] += "You are Right"
             else:
-                confirm_response += "No"
+                template[0] += "No"
+                template[1] += "Nope"
 
-            confirm_response += ", the {} of {} is {}".format(text_slot, str(restaurant[0]), str(restaurant[data_number]))
+            template[0] += ", the {} of {} is {}".format(text_slot, str(restaurant[0]), str(restaurant[data_number]))
+            template[1] += ", the {} of {} is actually {}".format(text_slot, str(restaurant[0]), str(restaurant[data_number]))
 
             if value[1] != str(restaurant[data_number]):
-                confirm_response += ", not {}".format(value[1])
+                template[0] += ", not {}".format(value[1])
 
-    if confirm_response == '':
-        confirm_response = 'Sorry, what do you want to confirm? the area, the price range or food type'
+    if template[0] == '':
+        template[0] = "Sorry, what do you want to confirm? the area, the price range or food type"
+    if template[1] == '':
+        template[1] = "You can confirm one of the following information; the area, the price range or food type ?"
 
-    return confirm_response
+    return return_random(template)
 
 
 # gets if final restaurant or not (enkelvoud of meervoud zin teruggeven)
@@ -191,7 +221,6 @@ def template_generator(filled_slots, slot_dict, suggested_restaurants, restauran
     poss_rests = restaurant_finder(filled_slots, restaurant_info, suggested_restaurants)
     speech_act = dialogue[len(dialogue) - 1][0]
     current_user_sentence = dialogue[len(dialogue) - 1][1]  # At the end of the dialogue list
-
 
     current_suggested_restaurant = suggested_restaurants[-1:] #last element of list, if it's empty then returns empty list
     if speech_act == "hello":
