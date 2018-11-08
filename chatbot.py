@@ -16,7 +16,8 @@ suggested_slot = None
 #by the classifier.
 specialwords = {'restart': ['start over', 'restart', 'start again', 'reset'],
                 'bye': ['bye','end', 'goodbye'],
-                'any': ["any", "don't care", 'anything', "don't mind", "whatever", "whichever", "don't care"]}
+                'any': ["any", "don't care", 'anything', "don't mind", "whatever", "whichever", "don't care"],
+                'options': ['options', 'possibilities']}
 # makes a list with lists of possible restaurants
 # typical element in restaurant list is [name, pricerange, area, food, phone, addr, postcode]
 def csv_reader():
@@ -65,6 +66,7 @@ def manager():
                         any_filler(filled_slots, suggested_slot)
                     else:
                         speech_act = speech_act.replace(speech_act, key) #It overrules the speech_act in utterances as 'restart'.
+        print(speech_act)
         dialogue.append([speech_act, inp])
         template_result = template_generator(filled_slots, slots, suggested_restaurants, suggested_slot, restaurant_info, dialogue)
         if speech_act in informacts: #The list of acts similar to inform is present in the template_generator file.

@@ -18,13 +18,14 @@ def template_generator(filled_slots, slot_dict, suggested_restaurants, suggested
     if speech_act == "hello":
         return template_hello()
     # if no preference / slots yet but the speech act is not inform, force them to give preference
-    elif ( speech_act!='bye' and (not filled_slots) and (speech_act not in informacts)) or speech_act == 'restart':
-        return template_restart()
+    #elif ( speech_act!='bye' and (not filled_slots) and (speech_act not in informacts)) or speech_act == 'restart':
+        #return template_restart()
     # joni:not restart, but search for another restaurant I guess while holding on to filled slots...
     elif speech_act == 'deny': return template_restart()
     elif speech_act == 'restart': return template_restart()
     elif speech_act == "bye": return template_bye()
     elif speech_act == "thankyou": return template_bye()
+    elif speech_act == 'options': return template_options(suggested_slot, poss_rests)
     elif speech_act == "confirm": return template_confirm(slot_dict, current_suggested_restaurant)
     elif speech_act == "request":
         if len(current_suggested_restaurant) == 0:
@@ -49,6 +50,7 @@ def template_request(restaurant, sentence):
                          "area": ["area"]}
     restaurant = restaurant[0]
     template = {}
+    info=''
     for key, values in possible_requests.items():
         for value in values:
             if value in sentence:
@@ -77,6 +79,27 @@ def template_request(restaurant, sentence):
         template[1] = "Would you like some information about {}? You can ask the following information: Phone number, address, postcode, price range, area or type of food?".format(str(restaurant[0]))
     return return_random(template)
 
+def template_options(suggested_slot, poss_rests):
+    templates=[]
+    mapping_dict = {'pricerange':1, 'area':2, 'food':3}
+    optionlist = []
+    c=0
+    if suggested_slot == None:
+        for restaurant in poss_rests:
+            for value in mapping_dict.values():
+                if value!='':
+                    optionlist.append(restaurant[value])
+        optionset = set(optionlist)
+        templates.append("All the options include: {}".format(' '.join(optionset)))
+        templates.append("The options are: {}".format(' '.join(optionset)))
+    else:
+        for restaurant in poss_rests:
+            optionlist.append(restaurant[mapping_dict[suggested_slot]])
+        optionset = set(optionlist)
+        templates.append("All options for the {} include: {}".format(suggested_slot,' '.join(optionset)))
+        templates.append("The possibilities for the {} are: {}".format(suggested_slot,' '.join(optionset)))
+    return(random.choice(templates))
+
 def template_restart():
     template = []
     template+= 100* ["I have reset the preferences. Could you please specify your preferences again?"]
@@ -92,8 +115,8 @@ def template_bye():
 
 def template_hello():
     template = {}
-    template[0] = "Welcome to the team14 restaurant system. You can tell your preference of area , price range or food type. How can we help?"
-    template[1] = "Hi, Welcome to the team14 restaurant system. We can help you to find a restaurant based on the area, type of food or price range you like"
+    template[0] = "\nSystem: Welcome to the team14 restaurant system. You can tell your preference of area , price range or food type. How can we help?"
+    template[1] = "\nSystem: Hi, Welcome to the team14 restaurant system. We can help you to find a restaurant based on the area, type of food or price range you like"
     return return_random(template)
 
 def template_inform(filled_slots, slot_dict, poss_rests, suggested_restaurants, restaurant_info):
@@ -110,7 +133,7 @@ def template_no_restaurant_found():
     return return_random(template)
 
 def template_confirm(slot_dict, current_suggested_restaurant):
-    restaurant = current_suggested_restaurant[0]
+    restaurant = current_suggested_restaurant
 
     template = {}
     for key, value in slot_dict.items():
@@ -129,11 +152,11 @@ def template_confirm(slot_dict, current_suggested_restaurant):
 
         if data_number != 0:
             if value[1] == str(restaurant[data_number]):
-                template[0] += "Yes"
-                template[1] += "You are Right"
+                template[0] = "Yes"
+                template[1] = "You are Right"
             else:
-                template[0] += "No"
-                template[1] += "Nope"
+                template[0] = "No"
+                template[1] = "Nope"
 
             template[0] += ", the {} of {} is {}".format(text_slot, str(restaurant[0]), str(restaurant[data_number]))
             template[1] += ", the {} of {} is actually {}".format(text_slot, str(restaurant[0]), str(restaurant[data_number]))
@@ -171,22 +194,24 @@ def restaurant_finder(filled_slots, restaurant_info, suggested_restaurants):
                 possible_restaurants_pruned.append(restaurant)
         return possible_restaurants_pruned
     possible_restaurants = []
-    values_filled_slots = []
-    # make list of slot values which are not None
-    for key, value_list in filled_slots.items():
-        slot = value_list[1:]
-        for value in slot:
-            if value == 'random':
-                values_filled_slots.append(key)
-            else:
-                values_filled_slots.append(value)
-    # make list of restaurant values and compare
     for restaurant in restaurant_info:
         info_elements = restaurant[1:4]
-        if set(values_filled_slots).issubset(info_elements):
+        if(slots_in_restinfo(filled_slots_pruned, info_elements)):
             if restaurant not in suggested_restaurants:
                 possible_restaurants.append(restaurant)
     return possible_restaurants
+
+#The idea of this function is that it checks if slots are in the restaurant info, and it even works if a slot like
+#food has multiple values, like "chinese or french".
+def slots_in_restinfo(filled_slots, info_elements):
+    for key, value in filled_slots.items():
+        slot_in_rest = False
+        for slot in value:
+            if slot in info_elements:
+                slot_in_rest = True
+        if slot_in_rest==False:
+            return False
+    return True
 
 # choose one random template from all given possible templates
 def return_random(template):
@@ -234,21 +259,21 @@ def slots_to_string(filled_slots, restaurant):
         slots = value[1:]
         order = value[0]
         if key == 'area':
-            if 'any' in slots and restaurant!=[]: #If the slot is any, the function should return the info from the restaurant instead of the user input.
-                templates = ['in the ' + restaurant[2] + ' part of town', 'in ' + restaurant[2] + ' district of town']
+            if ('any' in slots and restaurant!=[]) or restaurant!=[] : #If the slot is any, the function should return the info from the restaurant instead of the user input.
+                templates = ['in the ' + restaurant[2] + ' part of town', 'in the ' + restaurant[2] + ' district of town']
             else:
-                templates = ['in the ' + ",".join(slots) + ' part of town', 'in the ' + ",".join(slots) + ' district of town']
+                templates = ['in the ' + " or ".join(slots) + ' part of town', 'in the ' + " or ".join(slots) + ' district of town']
             orderedlist.append([order, return_random(templates)])
         elif key == 'food':
-            if 'any' in slots and restaurant!=[]:
+            if ('any' in slots and restaurant!=[]) or restaurant!=[]:
                 orderedlist.append([order, 'serving ' + restaurant[3] + ' food'])
             else:
-                orderedlist.append([order, 'serving ' + ",".join(slots) + ' food'])
+                orderedlist.append([order, 'serving ' + " or ".join(slots) + ' food'])
         elif key == 'pricerange':
-            if 'any' in slots and restaurant!=[]:
+            if ('any' in slots and restaurant!=[]) or restaurant!=[]:
                 templates = ['with ' + restaurant[1] + ' priced meals', 'having ' + restaurant[1] + ' prices']
             else:
-                templates = ['with ' + ",".join(slots) + ' priced meals', 'having ' + ",".join(slots) + ' prices']
+                templates = ['with ' + " or ".join(slots) + ' priced meals', 'having ' + " or ".join(slots) + ' prices']
             orderedlist.append([order, return_random(templates)])
     orderedlist.sort(key=lambda x: x[0]) #sorts the list by the order variable.
     for slot in orderedlist:
