@@ -85,19 +85,22 @@ def template_options(suggested_slot, poss_rests):
     optionlist = []
     c=0
     if suggested_slot == None:
-        for restaurant in poss_rests:
-            for value in mapping_dict.values():
-                if value!='':
-                    optionlist.append(restaurant[value])
-        optionset = set(optionlist)
-        templates.append("All the options include: {}".format(' '.join(optionset)))
-        templates.append("The options are: {}".format(' '.join(optionset)))
+        for key, value in mapping_dict.items():
+            optionlist = []
+            for restaurant in poss_rests:
+                optionlist.append(restaurant[value])
+            optionset = set(optionlist)
+            templates.append("All the options for the {} include: {}".format(key, ' '.join(optionset)))
+            templates.append("The options for the {} are: {}".format(key, ' '.join(optionset)))
+        return (random.choice(templates[0:1]) + '\nSystem: '+ random.choice(templates[2:3]) + '\nSystem: ' + random.choice(templates[4:5]))
     else:
         for restaurant in poss_rests:
             optionlist.append(restaurant[mapping_dict[suggested_slot]])
         optionset = set(optionlist)
         templates.append("All options for the {} include: {}".format(suggested_slot,' '.join(optionset)))
         templates.append("The possibilities for the {} are: {}".format(suggested_slot,' '.join(optionset)))
+    if len(optionlist)==0:
+        return("There are no options. Type 'restart' to restart the program or change the preferences.")
     return(random.choice(templates))
 
 def template_restart():

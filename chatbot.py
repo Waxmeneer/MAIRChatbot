@@ -17,7 +17,7 @@ suggested_slot = None
 specialwords = {'restart': ['start over', 'restart', 'start again', 'reset'],
                 'bye': ['bye','end', 'goodbye'],
                 'any': ["any", "don't care", 'anything', "don't mind", "whatever", "whichever", "don't care"],
-                'options': ['options', 'possibilities']}
+                'options': ['options', 'possibilities', 'help']}
 # makes a list with lists of possible restaurants
 # typical element in restaurant list is [name, pricerange, area, food, phone, addr, postcode]
 def csv_reader():
