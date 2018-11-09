@@ -42,12 +42,12 @@ def template_generator(filled_slots, slot_dict, suggested_restaurants, suggested
 
 
 def template_request(restaurant, sentence):
-    possible_requests = {"phone": ["phone"],
+    possible_requests = {"phone": ["phone", "number"],
                          "postcode": ["postcode", "post code"],
                          "addr": ["addr", "address"],
-                         "price": ["price"],
-                         "food": ["type"],
-                         "area": ["area"]}
+                         "price": ["price", "menu"],
+                         "food": ["type", "serve"],
+                         "area": ["area", "location"]}
     restaurant = restaurant[0]
     template = {}
     info=''
@@ -118,10 +118,10 @@ def template_bye():
     return random.choice(template)
 
 def template_hello():
-    template = {}
-    template[0] = "\nSystem: Welcome to the team14 restaurant system. You can tell your preference of area , price range or food type. How can we help?"
-    template[1] = "\nSystem: Hi, Welcome to the team14 restaurant system. We can help you to find a restaurant based on the area, type of food or price range you like"
-    return return_random(template)
+    template = []
+    template.append("\nSystem: Welcome to the team14 restaurant system. You can tell your preference of area , price range or food type. How can I help?")
+    template.append("\nSystem: Hi, Welcome to the team14 restaurant system. We can help you to find a restaurant based on the area, type of food or price range you like. How may I help you?")
+    return random.choice(template)
 
 def template_inform(filled_slots, slot_dict, poss_rests, suggested_restaurants, restaurant_info):
     for key, val in slot_dict.items():
@@ -131,10 +131,10 @@ def template_inform(filled_slots, slot_dict, poss_rests, suggested_restaurants, 
 
 
 def template_no_restaurant_found():
-    template = {}
-    template[0] = "No restaurant is found in our system. Perhaps different preferences?"
-    template[1] = "We cannot find any restaurant. What other kind of restaurant you like?"
-    return return_random(template)
+    template = []
+    template.append("No restaurant is found in our system. Perhaps different preferences?")
+    template.append("We cannot find any restaurant. What other kind of restaurant you like?")
+    return random.choice(template)
 
 def template_confirm(slot_dict, current_suggested_restaurant):
     restaurant = current_suggested_restaurant
