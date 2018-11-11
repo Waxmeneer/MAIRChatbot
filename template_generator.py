@@ -1,15 +1,11 @@
 import random
 from LSTM import model_trainer, model_user
 
-
-# Keep track of suggested restaurant if user wants another restaurant
-# Make templates and keep track of order in which user states preferences
-# aggregation?
-
-#In our program, these speech acts should get the same treatment as if they were inform speech acts.
+#In our program, these speech acts get the same treatment as if they were inform speech acts.
 informacts = ["inform", "reqmore", "negate", "affirm", 'ack', "null", "reqalts"]
 
-# gets if final restaurant or not (enkelvoud of meervoud zin teruggeven)
+# This function considers all gathered information and generates the appropriate template. It is a bit reliant on many if
+# statements, but we didn't think of an easier, better way.
 def template_generator(filled_slots, slot_dict, suggested_restaurants, suggested_slot, restaurant_info, dialogue):
     poss_rests = restaurant_finder(filled_slots, restaurant_info, suggested_restaurants)
     speech_act = dialogue[len(dialogue) - 1][0]
@@ -17,10 +13,6 @@ def template_generator(filled_slots, slot_dict, suggested_restaurants, suggested
     current_suggested_restaurant = suggested_restaurants[-1:] #last element of list, if it's empty then returns empty list
     if speech_act == "hello":
         return template_hello()
-    # if no preference / slots yet but the speech act is not inform, force them to give preference
-    #elif ( speech_act!='bye' and (not filled_slots) and (speech_act not in informacts)) or speech_act == 'restart':
-        #return template_restart()
-    # joni:not restart, but search for another restaurant I guess while holding on to filled slots...
     elif speech_act == 'deny': return template_restart()
     elif speech_act == 'restart': return template_restart()
     elif speech_act == "bye": return template_bye()
@@ -30,17 +22,17 @@ def template_generator(filled_slots, slot_dict, suggested_restaurants, suggested
     elif speech_act == "request":
         if len(current_suggested_restaurant) == 0:
             return template_no_restaurant_found()
-        # if 1 such restaurant exists: return restaurant info
+        # If 1 such restaurant exists: return restaurant info
         elif len(current_suggested_restaurant) == 1:
             return template_request(current_suggested_restaurant, current_user_sentence)
-        # if more: return the number of restaurants and ask for missing slot info
+        # If more: return the number of restaurants and ask for missing slot info
         elif len(current_suggested_restaurant) > 1:
             return template_inform_multiple_results(filled_slots, current_suggested_restaurant)
     elif speech_act in informacts:
-        # if no restaurant exists with a complete slots: give back to user and ask other preferences
+        # If no restaurant exists with a complete slots: give back to user and ask other preferences
         return(template_inform(filled_slots, slot_dict, poss_rests, suggested_restaurants, restaurant_info))
 
-
+# This template feeds back information to the user, and corresponds to the request speech act.
 def template_request(restaurant, sentence):
     possible_requests = {"phone": ["phone", "number"],
                          "postcode": ["postcode", "post code"],
@@ -55,7 +47,7 @@ def template_request(restaurant, sentence):
         for value in values:
             if value in sentence:
                 info = key
-
+    # Bit harsh amount of 'if' statements again, but in our opinion the easiest and most comprehensible way.
     if info == "phone":
         template[0] = "The phone number of {} is {} ".format(str(restaurant[0]), str(restaurant[4]) if str(restaurant[4]) else "unknown")
         template[1] = "The number is {} ".format(str(restaurant[4]) if str(restaurant[4]) else "unknown")
@@ -79,6 +71,9 @@ def template_request(restaurant, sentence):
         template[1] = "Would you like some information about {}? You can ask the following information: Phone number, address, postcode, price range, area or type of food?".format(str(restaurant[0]))
     return return_random(template)
 
+# This function returns options that the user can still make in terms of slots. For example, if there are 4 possible restaurants left,
+# the user can ask what are the food types left. This results in less 'no restaurant found' occurences and improves the experience
+# overall. The option speech act is not an actual classified speech act, but is assigned when certain keywords are uttered.
 def template_options(suggested_slot, poss_rests):
     templates=[]
     mapping_dict = {'pricerange':1, 'area':2, 'food':3}
@@ -104,6 +99,7 @@ def template_options(suggested_slot, poss_rests):
         return("There are no options. Type 'restart' to restart the program or change the preferences.")
     return(random.choice(templates))
 
+# Again, restart is a non-classified speech act, in which case the classifier is overruled.
 def template_restart():
     template = []
     template+= 100* ["I have reset the preferences. Could you please specify your preferences again?"]
@@ -127,7 +123,9 @@ def template_inform(filled_slots, slot_dict, poss_rests, suggested_restaurants, 
     for key, val in slot_dict.items():
         filled_slots[key] = val
     informinfo = inform_to_string(filled_slots, poss_rests, suggested_restaurants, restaurant_info)
-    return [informinfo[0], informinfo[1], informinfo[2]]  # Need to also return suggested_restaurants, as a new restaurant may have been suggested. Also the asked slot
+    # From inform_to_string, it receives a list containing respectively the string template, the suggested restaurants and potentially asked slot.
+    # Need to also return suggested_restaurants, as a new restaurant may have been suggested. Same goes for the asked slot
+    return [informinfo[0], informinfo[1], informinfo[2]]
 
 
 def template_no_restaurant_found():
@@ -174,7 +172,7 @@ def template_confirm(slot_dict, current_suggested_restaurant):
         template[1] = "You can confirm one of the following information; the area, the price range or food type ?"
     return return_random(template)
 
-#this function picks a random restaurant out of a list of possible restaurants
+# This function picks a random restaurant out of a list of possible restaurants
 def random_restaurant_picker(list_of_restaurants):
     try: #If the list of restaurants is empty, it can't perform random.choice.
         random_restaurant = random.choice(list_of_restaurants)
@@ -182,25 +180,12 @@ def random_restaurant_picker(list_of_restaurants):
         random_restaurant = []
     return [random_restaurant]
 
-
+# this function removes all 'dont care' slots out of the list, then searches for all possible remaining restaurants and picks one at random.
 def restaurant_finder(filled_slots, restaurant_info, suggested_restaurants):
-    # this function removes all 'dont care' slots out of the list, then searches for all possible remaining restaurants and picks one at random, should probably make this into it's own function sometime in the future
-    values_filled_slots_pruned = []
-    possible_restaurants_pruned = []
-    filled_slots_pruned = {key: value for (key, value) in filled_slots.items() if value[1] != "any"}
-    if filled_slots_pruned != filled_slots:
-        for key, value_list in filled_slots_pruned.items():
-            value = value_list[1]
-            values_filled_slots_pruned.append(value)
-        for restaurant in restaurant_info:
-            info_elements = restaurant[1:4]
-            if set(values_filled_slots_pruned).issubset(info_elements) and restaurant not in suggested_restaurants:
-                possible_restaurants_pruned.append(restaurant)
-        return possible_restaurants_pruned
     possible_restaurants = []
     for restaurant in restaurant_info:
         info_elements = restaurant[1:4]
-        if(slots_in_restinfo(filled_slots_pruned, info_elements)):
+        if(slots_in_restinfo(filled_slots, info_elements)):
             if restaurant not in suggested_restaurants:
                 possible_restaurants.append(restaurant)
     return possible_restaurants
@@ -211,7 +196,7 @@ def slots_in_restinfo(filled_slots, info_elements):
     for key, value in filled_slots.items():
         slot_in_rest = False
         for slot in value:
-            if slot in info_elements:
+            if slot in info_elements or slot=='any':
                 slot_in_rest = True
         if slot_in_rest==False:
             return False
