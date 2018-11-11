@@ -81,8 +81,7 @@ def manager():
         print('')
         print('System: ' + template_str)
         # if no restaurant found or user wants to reset, restart the dialogue
-        if template_str == "We cannot find any restaurant. What other kind of restaurant would you like?" \
-                or speech_act == 'deny' or speech_act== 'restart':
+        if speech_act == 'deny' or speech_act == 'restart':
             clear_vars()
         if speech_act == 'bye':
             break
